@@ -1,0 +1,22 @@
+<!-- productos.component.html -->
+<div class="productos-container">
+    <h1>Nuestros Productos</h1>
+    
+    <div class="filtros">
+        <button (click)="filtrarPorCategoria('todos')" [class.active]="categoriaActual === 'todos'">Todos</button>
+        <button (click)="filtrarPorCategoria('Cascos')" [class.active]="categoriaActual === 'Cascos'">Cascos</button>
+        <button (click)="filtrarPorCategoria('Guantes')" [class.active]="categoriaActual === 'Guantes'">Guantes</button>
+        <button (click)="filtrarPorCategoria('Neumáticos')" [class.active]="categoriaActual === 'Neumáticos'">Neumáticos</button>
+        <button (click)="filtrarPorCategoria('Accesorios')" [class.active]="categoriaActual === 'Accesorios'">Accesorios</button>
+    </div>
+    
+    <div class="productos-grid">
+        <div class="producto-card" *ngFor="let producto of productosFiltrados">
+            <img [src]="producto.imagenUrl" [alt]="producto.nombre">
+            <h3>{{ producto.nombre }}</h3>
+            <p class="descripcion">{{ producto.descripcion }}</p>
+            <p class="precio">${{ producto.precio | number }}</p>
+            <button (click)="verDetalles(producto.id)">Ver Detalles</button>
+        </div>
+    </div>
+</div>

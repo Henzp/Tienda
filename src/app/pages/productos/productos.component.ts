@@ -1,5 +1,5 @@
-// productos.component.ts
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ProductoService } from '../../services/producto.service';
 import { Producto } from '../../models/producto';
 
@@ -12,18 +12,41 @@ export class ProductosComponent implements OnInit {
   productos: Producto[] = [];
   productosFiltrados: Producto[] = [];
   categoriaActual: string = 'todos';
+  terminoBusqueda: string = '';
 
-  constructor(private productoService: ProductoService) { }
+  constructor(
+    private productoService: ProductoService,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
+    // Cargar todos los productos
     this.productoService.getProductos().subscribe(productos => {
       this.productos = productos;
-      this.productosFiltrados = productos;
+      
+      // Suscribirse a cambios en los parámetros de la URL
+      this.route.queryParams.subscribe(params => {
+        if (params['busqueda']) {
+          this.terminoBusqueda = params['busqueda'];
+          this.buscarProductos(this.terminoBusqueda);
+        } else {
+          // Si no hay búsqueda, aplicar el filtro de categoría
+          this.filtrarPorCategoria(this.categoriaActual);
+        }
+      });
+    });
+  }
+
+  buscarProductos(termino: string): void {
+    this.terminoBusqueda = termino;
+    this.productoService.buscarProductos(termino).subscribe(resultados => {
+      this.productosFiltrados = resultados;
     });
   }
 
   filtrarPorCategoria(categoria: string): void {
     this.categoriaActual = categoria;
+    this.terminoBusqueda = ''; // Limpiar término de búsqueda
     
     if (categoria === 'todos') {
       this.productosFiltrados = this.productos;
@@ -34,8 +57,12 @@ export class ProductosComponent implements OnInit {
     }
   }
 
+  limpiarBusqueda(): void {
+    this.terminoBusqueda = '';
+    this.filtrarPorCategoria(this.categoriaActual);
+  }
+
   verDetalles(id: number): void {
-    // Por ahora solo mostramos un alert, luego lo mejoraremos con una página de detalles
     alert(`Ver detalles del producto ${id}`);
   }
 }

@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { BannerComponent } from './components/banner/banner.component';
+import { MarcasBannerComponent } from './components/marcas-banner/marcas-banner.component';
 import { HomeComponent } from './pages/home/home.component';
 import { ProductosComponent } from './pages/productos/productos.component';
 import { ContactoComponent } from './pages/contacto/contacto.component';
@@ -17,6 +18,7 @@ import { ContactoComponent } from './pages/contacto/contacto.component';
     HeaderComponent,
     FooterComponent,
     BannerComponent,
+    MarcasBannerComponent,
     HomeComponent,
     ProductosComponent,
     ContactoComponent

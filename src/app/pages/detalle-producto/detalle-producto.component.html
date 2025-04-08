@@ -1,77 +1,147 @@
+<!-- Breadcrumb -->
+<div class="breadcrumb-wrapper" *ngIf="producto">
+  <div class="breadcrumb-container">
+    <a routerLink="/home">Inicio</a>
+    <span class="separator">›</span>
+    
+    <!-- Para productos como neumáticos -->
+    <a [routerLink]="['/', categoriaUrl]">{{ producto?.categoria }}</a>
+    <span class="separator">›</span>
+    <a *ngIf="producto?.marca" [routerLink]="['/neumaticos']">{{ producto?.marca }}</a>
+    <span *ngIf="producto?.marca" class="separator">›</span>
+    
+    <span class="current">{{ producto?.nombre }}</span>
+  </div>
+</div>
+
+<!-- Resto de tu HTML de detalle de producto -->
 <div class="detalle-container" *ngIf="!loading && !error && producto">
-    <div class="detalle-content">
-      <div class="producto-imagenes">
-        <div class="imagen-principal" [class.zoom-active]="imagenZoom">
-          <img [src]="imagenActual" [alt]="producto.nombre" (click)="toggleZoom()" />
-          <div class="zoom-indicator" *ngIf="!imagenZoom">Haz click para ampliar</div>
+  <div class="detalle-content">
+    <div class="producto-imagenes">
+      <div class="imagen-principal" [class.zoom-active]="imagenZoom">
+        <div class="zoom-container" 
+             (click)="toggleZoom()" 
+             (mousemove)="onMouseMove($event)">
+          <img [src]="imagenActual" [alt]="producto?.nombre" 
+               [style.transform]="imagenZoom ? 'scale(2)' : 'scale(1)'"
+               [style.transform-origin]="zoomPosition">
+        </div>
+        <!-- Botones de navegación de imágenes -->
+        <div class="imagen-navegacion">
+          <button class="nav-btn prev" (click)="imagenAnterior()" *ngIf="imagenes.length > 1">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="nav-btn next" (click)="imagenSiguiente()" *ngIf="imagenes.length > 1">
+            <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
         
-        <div class="imagenes-adicionales" *ngIf="imagenes.length > 1">
-          <div 
-            *ngFor="let imagen of imagenes"
-            class="miniatura" 
-            [class.active]="imagenActual === imagen"
-            (click)="cambiarImagen(imagen)">
-            <img [src]="imagen" [alt]="producto.nombre" />
-          </div>
+        <div class="zoom-indicator" *ngIf="!imagenZoom">Haz click para ampliar</div>
+      </div>
+      
+      <div class="imagenes-miniaturas" *ngIf="imagenes.length > 1">
+        <div 
+          *ngFor="let imagen of imagenes; let i = index"
+          class="miniatura" 
+          [class.active]="imagenActual === imagen"
+          (click)="cambiarImagen(imagen)">
+          <img [src]="imagen" [alt]="producto?.nombre + ' imagen ' + (i+1)" />
+        </div>
+      </div>
+    </div>
+    
+    <div class="producto-info">
+      <h1>{{ producto?.nombre }}</h1>
+      
+      <div class="producto-meta">
+        <div class="marca" *ngIf="producto?.marca">
+          <span class="label">Marca:</span> {{ producto?.marca }}
+        </div>
+        <div class="sku" *ngIf="producto?.sku">
+          <span class="label">SKU:</span> {{ producto?.sku }}
+        </div>
+        <div class="categoria" *ngIf="producto?.categoria">
+          <span class="label">Categoría:</span> {{ producto?.categoria }}
         </div>
       </div>
       
-      <div class="producto-info">
-        <h1>{{ producto.nombre }}</h1>
-        
-        <div class="producto-meta">
-          <div class="marca" *ngIf="producto.marca">
-            <span class="label">Marca:</span> {{ producto.marca }}
-          </div>
-          <div class="sku" *ngIf="producto.sku">
-            <span class="label">SKU:</span> {{ producto.sku }}
-          </div>
+      <div class="precio">
+        ${{ producto?.precio | number }}
+      </div>
+      
+      <div class="disponibilidad">
+        <span class="en-stock">En stock</span>
+      </div>
+      
+      <div class="cantidad-compra">
+        <div class="cantidad-selector">
+          <button (click)="disminuirCantidad()">-</button>
+          <input type="number" min="1" max="10" [(ngModel)]="cantidad">
+          <button (click)="aumentarCantidad()">+</button>
         </div>
         
-        <div class="precio">
-          ${{ producto.precio | number }}
+        <button class="btn-agregar-carrito">
+          <i class="fas fa-shopping-cart"></i> Añadir al carrito
+        </button>
+      </div>
+      
+      <div class="descripcion">
+        <h2>Descripción</h2>
+        <p *ngIf="producto?.descripcionLarga; else descripcionCorta" [innerHTML]="formatearDescripcion(producto?.descripcionLarga || '')"></p>
+        <ng-template #descripcionCorta>
+          <p>{{ producto?.descripcion || 'Sin descripción disponible.' }}</p>
+        </ng-template>
+        
+        <!-- Información adicional según el tipo de producto -->
+        <div class="caracteristicas" *ngIf="producto?.categoria === 'Neumáticos'">
+          <h3>Características</h3>
+          <ul>
+            <li>Excelente adherencia en superficies secas y mojadas</li>
+            <li>Compuesto de caucho de alto rendimiento</li>
+            <li>Diseño optimizado para mayor duración</li>
+            <li>Ideal para motos deportivas y touring</li>
+          </ul>
         </div>
         
-        <div class="descripcion">
-          <h2>Descripción</h2>
-          <p>{{ producto.descripcion || 'Sin descripción disponible.' }}</p>
-          
-          <!-- Información adicional según el tipo de producto -->
-          <div class="caracteristicas" *ngIf="producto.categoria === 'Neumáticos'">
-            <h3>Características</h3>
-            <ul>
-              <li>Excelente adherencia en superficies secas y mojadas</li>
-              <li>Compuesto de caucho de alto rendimiento</li>
-              <li>Diseño optimizado para mayor duración</li>
-              <li>Ideal para motos deportivas y touring</li>
-            </ul>
-          </div>
-          
-          <div class="caracteristicas" *ngIf="producto.categoria === 'Lubricantes'">
-            <h3>Características</h3>
-            <ul>
-              <li>Excelente protección del motor</li>
-              <li>Reduce el desgaste y la fricción</li>
-              <li>Aumenta la vida útil de los componentes</li>
-              <li>Mejor rendimiento en altas temperaturas</li>
-            </ul>
-          </div>
+        <div class="caracteristicas" *ngIf="producto?.categoria === 'Lubricantes'">
+          <h3>Características</h3>
+          <ul>
+            <li>Excelente protección del motor</li>
+            <li>Reduce el desgaste y la fricción</li>
+            <li>Aumenta la vida útil de los componentes</li>
+            <li>Mejor rendimiento en altas temperaturas</li>
+          </ul>
         </div>
         
-        <div class="acciones">
-          <button class="btn-comprar">Añadir al carrito</button>
-          <button class="btn-consultar">Consultar disponibilidad</button>
+        <div class="caracteristicas" *ngIf="producto?.categoria === 'Cascos'">
+          <h3>Características</h3>
+          <ul>
+            <li>Material de alta resistencia a impactos</li>
+            <li>Interior ergonómico y acolchado</li>
+            <li>Sistema de ventilación avanzado</li>
+            <li>Visera con protección UV</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="compartir">
+        <span class="label">Compartir:</span>
+        <div class="redes-sociales">
+          <a href="#" class="red-social"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="red-social"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="red-social"><i class="fab fa-whatsapp"></i></a>
+          <a href="#" class="red-social"><i class="fab fa-pinterest-p"></i></a>
         </div>
       </div>
     </div>
   </div>
-  
-  <div class="loading" *ngIf="loading">
-    <p>Cargando detalles del producto...</p>
-  </div>
-  
-  <div class="error" *ngIf="error">
-    <p>Lo sentimos, no se pudo encontrar el producto solicitado.</p>
-    <button routerLink="/productos">Ver todos los productos</button>
-  </div>
+</div>
+
+<div class="loading" *ngIf="loading">
+  <p>Cargando detalles del producto...</p>
+</div>
+
+<div class="error" *ngIf="error">
+  <p>Lo sentimos, no se pudo encontrar el producto solicitado.</p>
+  <button routerLink="/productos">Ver todos los productos</button>
+</div>

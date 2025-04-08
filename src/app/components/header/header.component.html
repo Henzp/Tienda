@@ -30,7 +30,15 @@
             <a routerLink="/neumaticos" routerLinkActive="active">NEUMÁTICOS</a>
           </div>
         </li>
-        <li><a routerLink="/repuestos" routerLinkActive="active">REPUESTOS</a></li>
+        <li class="dropdown">
+          <a href="javascript:void(0)">REPUESTOS <i class="fas fa-caret-down"></i></a>
+          <div class="dropdown-content">
+            <a [routerLink]="['/repuestos']" [queryParams]="{tipo: 'frenos'}" routerLinkActive="active">FRENOS</a>
+            <a [routerLink]="['/repuestos']" [queryParams]="{tipo: 'transmision'}" routerLinkActive="active">TRANSMISIÓN</a>
+            <a [routerLink]="['/repuestos']" [queryParams]="{tipo: 'cadena'}" routerLinkActive="active">CADENA</a>
+            <a [routerLink]="['/repuestos']" [queryParams]="{tipo: 'motor'}" routerLinkActive="active">MOTOR</a>
+          </div>
+        </li>
         <li><a routerLink="/cascos" routerLinkActive="active">CASCOS</a></li>
         <li><a routerLink="/contacto" routerLinkActive="active">CONTACTO</a></li>
       </ul>

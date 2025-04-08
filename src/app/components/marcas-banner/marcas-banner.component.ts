@@ -18,5 +18,6 @@ export class MarcasBannerComponent {
     { nombre: 'RK', logo: 'assets/marcas/rk.jpg' },
     { nombre: 'Vrooam', logo: 'assets/marcas/vrooam.jpg' },
     { nombre: 'Dunlop', logo: 'assets/marcas/dunlop.svg' },
+    { nombre: 'Sunstars', logo: 'assets/marcas/Sunstars.jpg'}
   ];
 }

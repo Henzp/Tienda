@@ -20,8 +20,8 @@ const routes: Routes = [
   { path: 'repuestos', component: RepuestosComponent },
   { path: 'cascos', component: CascosComponent },
   { path: 'contacto', component: ContactoComponent },
-  { path: 'guantes' , component: GuantesComponent },
-  { path: 'detalle/:id', component: DetalleProductoComponent },
+  { path: 'guantes', component: GuantesComponent },
+  { path: 'producto/:id', component: DetalleProductoComponent }, // Cambié de 'detalle/:id' a 'producto/:id'
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: '**', redirectTo: 'home' }
 ];

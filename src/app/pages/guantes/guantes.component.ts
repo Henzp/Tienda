@@ -48,6 +48,5 @@ export class GuantesComponent implements OnInit {
 
   verDetalles(id: number): void {
     this.router.navigate(['/producto', id]);
-    // Aquí podrías implementar navegación a página de detalles
   }
 }

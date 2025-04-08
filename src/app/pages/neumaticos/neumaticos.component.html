@@ -32,11 +32,12 @@
     <div class="productos-grid" *ngIf="neumaticosFiltered.length > 0">
         <div class="producto-card" *ngFor="let neumatico of neumaticosFiltered">
             <img [src]="neumatico.imagenUrl" [alt]="neumatico.nombre">
-            <h3>{{ neumatico.nombre }}</h3>
-            <div class="marca" *ngIf="neumatico.marca">{{ neumatico.marca }}</div>
-            <div class="sku" *ngIf="neumatico.sku">SKU: {{ neumatico.sku }}</div>
-            <div class="precio">${{ neumatico.precio | number }}</div>
+            <div class="card-content">
+                <h3 class="producto-titulo">{{ neumatico.nombre }}</h3>
+                <p class="producto-descripcion">{{ neumatico.descripcion }}</p>
+                <p class="producto-sku" *ngIf="neumatico.sku">SKU: {{ neumatico.sku }}</p>
+                <p class="precio">${{ neumatico.precio | number }}</p>
+            </div>
             <button class="ver-detalles" (click)="verDetalles(neumatico.id)">Ver Detalles</button>
         </div>
     </div>
-</div>

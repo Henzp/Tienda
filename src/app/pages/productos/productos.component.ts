@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProductoService } from '../../services/producto.service';
 import { Producto } from '../../models/producto';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-productos',
@@ -16,7 +17,8 @@ export class ProductosComponent implements OnInit {
 
   constructor(
     private productoService: ProductoService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -63,6 +65,6 @@ export class ProductosComponent implements OnInit {
   }
 
   verDetalles(id: number): void {
-    alert(`Ver detalles del producto ${id}`);
+    this.router.navigate(['/producto', id]);
   }
 }

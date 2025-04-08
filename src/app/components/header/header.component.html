@@ -17,17 +17,24 @@
       </div>
     </div>
     <div class="header-nav">
-      <div class="container">
-        <nav>
-          <ul>
-            <li><a routerLink="/home" routerLinkActive="active">Inicio</a></li>
-            <li><a routerLink="/productos" routerLinkActive="active">Productos</a></li>
-            <li><a href="#">Accesorios</a></li>
-            <li><a href="#">Repuestos</a></li>
-            <li><a href="#">Cascos</a></li>
-            <li><a routerLink="/contacto" routerLinkActive="active">Contacto</a></li>
-          </ul>
-        </nav>
-      </div>
-    </div>
+  <div class="container">
+    <nav>
+      <ul>
+        <li><a routerLink="/home" routerLinkActive="active">INICIO</a></li>
+        <li><a routerLink="/lubricantes" routerLinkActive="active">LUBRICANTES</a></li>
+        <li class="dropdown">
+          <a href="javascript:void(0)">ACCESORIOS <i class="fas fa-caret-down"></i></a>
+          <div class="dropdown-content">
+            <a routerLink="/accesorios" routerLinkActive="active">ACCESORIOS</a>
+            <a routerLink="/guantes" routerLinkActive="active">GUANTES</a>
+            <a routerLink="/neumaticos" routerLinkActive="active">NEUMÁTICOS</a>
+          </div>
+        </li>
+        <li><a routerLink="/repuestos" routerLinkActive="active">REPUESTOS</a></li>
+        <li><a routerLink="/cascos" routerLinkActive="active">CASCOS</a></li>
+        <li><a routerLink="/contacto" routerLinkActive="active">CONTACTO</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
   </header>

@@ -1,0 +1,42 @@
+<div class="guantes-container">
+    <h1>Guantes para Motos</h1>
+    
+    <div class="descripcion-categoria">
+        <p>Nuestra colección de guantes ofrece protección y comodidad para tus manos en cada viaje. Diseñados para resistir impactos y proporcionar un agarre seguro en los controles de tu moto.</p>
+    </div>
+    
+    <div class="filtros-marca" *ngIf="marcas.length > 1">
+        <h3>Filtrar por marca:</h3>
+        <div class="botones-marca">
+            <button 
+                (click)="filtrarPorMarca('todas')" 
+                [class.active]="marcaSeleccionada === 'todas'">
+                Todas las marcas
+            </button>
+            <button 
+                *ngFor="let marca of marcas"
+                (click)="filtrarPorMarca(marca)"
+                [class.active]="marcaSeleccionada === marca">
+                {{ marca }}
+            </button>
+        </div>
+    </div>
+    
+    <!-- Mensaje si no hay productos -->
+    <div class="no-productos" *ngIf="guantesFiltrados.length === 0">
+        <p>No hay guantes disponibles en este momento.</p>
+        <button (click)="filtrarPorMarca('todas')" *ngIf="guantes.length > 0">Ver todos los guantes</button>
+    </div>
+    
+    <!-- Grid de productos -->
+    <div class="productos-grid" *ngIf="guantesFiltrados.length > 0">
+        <div class="producto-card" *ngFor="let guante of guantesFiltrados">
+            <img [src]="guante.imagenUrl" [alt]="guante.nombre">
+            <h3>{{ guante.nombre }}</h3>
+            <div class="marca" *ngIf="guante.marca">{{ guante.marca }}</div>
+            <div class="sku" *ngIf="guante.sku">SKU: {{ guante.sku }}</div>
+            <div class="precio">${{ guante.precio | number }}</div>
+            <button class="ver-detalles" (click)="verDetalles(guante.id)">Ver Detalles</button>
+        </div>
+    </div>
+</div>

@@ -12,10 +12,11 @@ interface Marca {
 })
 export class MarcasBannerComponent {
   marcas: Marca[] = [
-    { nombre: 'Alpinestars', logo: 'assets/marcas/continental.jpg' },
-    { nombre: 'Shoei', logo: 'assets/marcas/ferodo.jpg' },
-    { nombre: 'Pirelli', logo: 'assets/marcas/regina.jpg' },
-    { nombre: 'Dunlop', logo: 'assets/marcas/rk.jpg' },
-    { nombre: 'Fox Racing', logo: 'assets/marcas/vrooam.jpg' },
+    { nombre: 'Continental', logo: 'assets/marcas/continental.jpg' },
+    { nombre: 'Ferodo', logo: 'assets/marcas/ferodo.jpg' },
+    { nombre: 'Regina', logo: 'assets/marcas/regina.jpg' },
+    { nombre: 'RK', logo: 'assets/marcas/rk.jpg' },
+    { nombre: 'Vrooam', logo: 'assets/marcas/vrooam.jpg' },
+    { nombre: 'Dunlop', logo: 'assets/marcas/dunlop.svg' },
   ];
 }

@@ -1,0 +1,77 @@
+<div class="detalle-container" *ngIf="!loading && !error && producto">
+    <div class="detalle-content">
+      <div class="producto-imagenes">
+        <div class="imagen-principal" [class.zoom-active]="imagenZoom">
+          <img [src]="imagenActual" [alt]="producto.nombre" (click)="toggleZoom()" />
+          <div class="zoom-indicator" *ngIf="!imagenZoom">Haz click para ampliar</div>
+        </div>
+        
+        <div class="imagenes-adicionales" *ngIf="imagenes.length > 1">
+          <div 
+            *ngFor="let imagen of imagenes"
+            class="miniatura" 
+            [class.active]="imagenActual === imagen"
+            (click)="cambiarImagen(imagen)">
+            <img [src]="imagen" [alt]="producto.nombre" />
+          </div>
+        </div>
+      </div>
+      
+      <div class="producto-info">
+        <h1>{{ producto.nombre }}</h1>
+        
+        <div class="producto-meta">
+          <div class="marca" *ngIf="producto.marca">
+            <span class="label">Marca:</span> {{ producto.marca }}
+          </div>
+          <div class="sku" *ngIf="producto.sku">
+            <span class="label">SKU:</span> {{ producto.sku }}
+          </div>
+        </div>
+        
+        <div class="precio">
+          ${{ producto.precio | number }}
+        </div>
+        
+        <div class="descripcion">
+          <h2>Descripción</h2>
+          <p>{{ producto.descripcion || 'Sin descripción disponible.' }}</p>
+          
+          <!-- Información adicional según el tipo de producto -->
+          <div class="caracteristicas" *ngIf="producto.categoria === 'Neumáticos'">
+            <h3>Características</h3>
+            <ul>
+              <li>Excelente adherencia en superficies secas y mojadas</li>
+              <li>Compuesto de caucho de alto rendimiento</li>
+              <li>Diseño optimizado para mayor duración</li>
+              <li>Ideal para motos deportivas y touring</li>
+            </ul>
+          </div>
+          
+          <div class="caracteristicas" *ngIf="producto.categoria === 'Lubricantes'">
+            <h3>Características</h3>
+            <ul>
+              <li>Excelente protección del motor</li>
+              <li>Reduce el desgaste y la fricción</li>
+              <li>Aumenta la vida útil de los componentes</li>
+              <li>Mejor rendimiento en altas temperaturas</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="acciones">
+          <button class="btn-comprar">Añadir al carrito</button>
+          <button class="btn-consultar">Consultar disponibilidad</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="loading" *ngIf="loading">
+    <p>Cargando detalles del producto...</p>
+  </div>
+  
+  <div class="error" *ngIf="error">
+    <p>Lo sentimos, no se pudo encontrar el producto solicitado.</p>
+    <button routerLink="/productos">Ver todos los productos</button>
+  </div>

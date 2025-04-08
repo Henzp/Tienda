@@ -16,7 +16,9 @@ export class ProductoService {
       precio: 189990,
       imagenUrl: 'assets/casco.jpg',
       categoria: 'Cascos',
-      destacado: true
+      destacado: true,
+      sku: '111111',
+      marca: 'CASCO'
     },
     {
       id: 2,
@@ -25,26 +27,101 @@ export class ProductoService {
       precio: 79990,
       imagenUrl: 'assets/guantes.jpg',
       categoria: 'Guantes',
-      destacado: true
+      destacado: true,
+      sku: '222222',
+      marca: 'Marca'
     },
+    
     {
       id: 3,
-      nombre: 'Neumático Continental',
-      descripcion: 'Neumático de alta calidad para todo tipo de terreno',
-      precio: 132900,
-      imagenUrl: 'assets/neumaticos.jpg',
-      categoria: 'Neumáticos',
-      destacado: true
+      nombre: 'Manillas ZETA',
+      descripcion: 'Manillas',
+      precio: 128900,
+      imagenUrl: 'assets/accesorios/manillas_zeta.jpg',
+      categoria: 'Accesorios',
+      destacado: false,
+      sku: 'ZS63-0221',
+      marca: 'ZETA'
     },
     {
       id: 4,
-      nombre: 'Manillas Led',
-      descripcion: 'Manillas con luz led para mayor visibilidad',
-      precio: 128900,
-      imagenUrl: 'assets/manillas.jpg',
+      nombre: 'Calienta Puños Oxford EVO',
+      descripcion: 'Calienta puños',
+      precio: 132900,
+      imagenUrl: 'assets/accesorios/oxfordevo.jpg',
       categoria: 'Accesorios',
-      destacado: false
+      destacado: false,
+      sku: 'MLC994026965',
+      marca: 'Oxford'
+    },
+    {
+      id: 5,
+      nombre: 'Aceite de Motor Castrol',
+      descripcion: '10W 50',
+      precio: 21900,
+      imagenUrl: 'assets/Aceites/Castrol10w50.jpg',
+      categoria: 'Lubricantes',
+      destacado: false,
+      sku: 'MLC998496228',
+      marca: 'Castrol'
+    },
+    {
+      id: 6,
+      nombre: 'Contisport attack 120/70zr 17',
+      descripcion: '',
+      precio: 132900,
+      imagenUrl: 'assets/Neumaticos/continental/contisportattack_120-70zr-17.jpg',
+      categoria: 'Neumáticos',
+      destacado: false,
+      sku: 'M02443990000',
+      marca: 'Continental'
+    },
+    {
+      id: 7,
+      nombre: 'Contimotion 180/55 Zr17 W 73',
+      descripcion: 'Neumatico',
+      precio: 189900,
+      imagenUrl: 'assets/Neumaticos/continental/contimotion_180-55-zr17w73.jpg',
+      categoria: 'Neumáticos',
+      destacado: false,
+      sku: 'MLC1099294133',
+      marca: 'Continental'
+    },
+    {
+      id: 8,
+      nombre: 'Contisportattack 180/55 Zr17 W 73',
+      descripcion: 'Neumatico',
+      precio: 188900,
+      imagenUrl: 'assets/Neumaticos/continental/contisport-attack_180-55-zr17w73.jpg',
+      categoria: 'Neumáticos',
+      destacado: false,
+      sku: 'MMLC1004828089',
+      marca: 'Continental'
+    },
+    {
+      id: 9,
+      nombre: 'Contimotion 120/70 Zr17 M/c W 58',
+      descripcion: 'Neumatico',
+      precio: 128900,
+      imagenUrl: 'assets/Neumaticos/continental/contimotion_120-70zr17m-c58w.jpg',
+      categoria: 'Neumáticos',
+      destacado: false,
+      sku: 'MLC18430200',
+      marca: 'Continental'
+    },
+    {
+      id: 10,
+      nombre: 'GT 601 110/70-17',
+      descripcion: 'Neumatico',
+      precio: 91900,
+      imagenUrl: 'assets/Neumaticos/dunlop/dunlop_gt_601_110-70-17.jpg',
+      categoria: 'Neumáticos',
+      destacado: false,
+      sku: '307339',
+      marca: 'Dunlop'
     }
+
+
   ];
 
   constructor() { }

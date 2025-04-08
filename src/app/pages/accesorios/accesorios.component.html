@@ -1,0 +1,25 @@
+<div class="accesorios-container">
+    <h1>Accesorios para Motos</h1>
+    
+    <div class="descripcion-categoria">
+        <p>Descubre nuestra amplia selección de accesorios para personalizar y mejorar tu moto. Ofrecemos productos de la más alta calidad para que tu experiencia de conducción sea óptima.</p>
+    </div>
+    
+    <!-- Mensaje si no hay productos -->
+    <div class="no-productos" *ngIf="accesorios.length === 0">
+        <p>No hay accesorios disponibles en este momento.</p>
+        <p>¡Vuelve pronto para ver nuestras nuevas adiciones!</p>
+    </div>
+    
+    <!-- Grid de productos -->
+    <div class="productos-grid" *ngIf="accesorios.length > 0">
+        <div class="producto-card" *ngFor="let accesorio of accesorios">
+            <img [src]="accesorio.imagenUrl" [alt]="accesorio.nombre">
+            <h3>{{ accesorio.nombre }}</h3>
+            <div class="marca" *ngIf="accesorio.marca">{{ accesorio.marca }}</div>
+            <div class="sku" *ngIf="accesorio.sku">SKU: {{ accesorio.sku }}</div>
+            <div class="precio">${{ accesorio.precio | number }}</div>
+            <button class="ver-detalles" (click)="verDetalles(accesorio.id)">Ver Detalles</button>
+        </div>
+    </div>
+</div>

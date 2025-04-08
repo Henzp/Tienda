@@ -7,4 +7,6 @@ export interface Producto {
     imagenUrl: string;
     categoria: string;
     destacado?: boolean;
+    sku?: string;
+    marca?: string;
   }

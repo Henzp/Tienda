@@ -261,7 +261,7 @@ export class ProductoService {
     },
     {
       id: 21,
-      nombre: 'Kit de Embrague Completo Honda CBR 600RR',
+      nombre: 'Prueba 1',
       descripcion: 'Kit completo de embrague para Honda CBR 600RR',
       precio: 115900,
       imagenUrl: 'assets/repuestos/kit-embrague.jpg',

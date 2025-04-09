@@ -1,11 +1,12 @@
 <!-- home.component.html -->
 <div class="home-container">
-    <section class="hero">
+    <div class="hero" [ngStyle]="{'background-image': heroBackgroundStyle}">
         <div class="hero-content">
-            <h1>Bienvenido a Moto Moto Store</h1>
-            <p>Tu tienda especializada en productos y accesorios para motos</p>
-            <button routerLink="/productos">Ver Productos</button>
+          <h1>Bienvenido a Moto Moto Store</h1>
+          <p>Tu tienda especializada en productos y accesorios para motos</p>
+          <button routerLink="/productos">Ver Productos</button>
         </div>
+      </div>
     </section>
     
     <section class="featured-products">

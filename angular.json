@@ -32,10 +32,10 @@
           "configurations": {
             "production": {
               "fileReplacements": [
-              {
-                "replace": "src/environments/environment.ts",
-                "with": "src/environments/environment.prod.ts"
-              }
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
               ],
               "budgets": [
                 {
@@ -49,7 +49,8 @@
                   "maximumError": "10kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "baseHref": "/Tienda/"   // Esta es la línea añadida
             },
             "development": {
               "buildOptimizer": false,

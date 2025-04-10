@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 export class ProductosComponent implements OnInit {
   productos: Producto[] = [];
   productosFiltrados: Producto[] = [];
+  categorias: string[] = []; // Nueva propiedad para almacenar las categorías disponibles
   categoriaActual: string = 'todos';
   terminoBusqueda: string = '';
 
@@ -22,6 +23,11 @@ export class ProductosComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // Obtener las categorías disponibles
+    this.productoService.getCategorias().subscribe(categorias => {
+      this.categorias = categorias;
+    });
+    
     // Cargar todos los productos
     this.productoService.getProductos().subscribe(productos => {
       this.productos = productos;
@@ -41,6 +47,8 @@ export class ProductosComponent implements OnInit {
 
   buscarProductos(termino: string): void {
     this.terminoBusqueda = termino;
+    
+    // Usa el método buscarProductos del servicio actualizado
     this.productoService.buscarProductos(termino).subscribe(resultados => {
       this.productosFiltrados = resultados;
     });
@@ -51,11 +59,15 @@ export class ProductosComponent implements OnInit {
     this.terminoBusqueda = ''; // Limpiar término de búsqueda
     
     if (categoria === 'todos') {
-      this.productosFiltrados = this.productos;
+      // Si es "todos", usar el método getProductos
+      this.productoService.getProductos().subscribe(productos => {
+        this.productosFiltrados = productos;
+      });
     } else {
-      this.productosFiltrados = this.productos.filter(
-        producto => producto.categoria === categoria
-      );
+      // Utilizar el nuevo método getProductosPorCategoria
+      this.productoService.getProductosPorCategoria(categoria).subscribe(productos => {
+        this.productosFiltrados = productos;
+      });
     }
   }
 

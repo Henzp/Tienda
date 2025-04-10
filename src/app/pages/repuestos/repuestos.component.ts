@@ -11,6 +11,7 @@ import { Producto } from '../../models/producto';
 export class RepuestosComponent implements OnInit {
   repuestos: Producto[] = [];
   repuestosFiltrados: Producto[] = [];
+  subcategorias: string[] = []; // Cambiar para usar las subcategorías del servicio
   marcas: string[] = [];
   marcaSeleccionada: string = 'todas';
   tipoActual: string = 'todos';
@@ -22,14 +23,19 @@ export class RepuestosComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.productoService.getProductos().subscribe(productos => {
-      // Filtrar solo los productos de categoría 'Repuestos'
-      this.repuestos = productos.filter(producto => 
-        producto.categoria === 'Repuestos'
-      );
+    // Obtener subcategorías de repuestos desde el servicio
+    this.productoService.getSubcategoriasRepuestos().subscribe(subcategorias => {
+      this.subcategorias = subcategorias;
+    });
+    
+    // Obtener todos los repuestos usando el nuevo método
+    this.productoService.getProductosPorCategoria('Repuestos').subscribe(repuestos => {
+      this.repuestos = repuestos;
       
       // Obtener las marcas únicas
-      this.marcas = [...new Set(this.repuestos.map(repuesto => repuesto.marca || 'Sin marca'))];
+      this.marcas = [...new Set(this.repuestos
+        .filter(r => r.marca) // Solo productos con marca definida
+        .map(r => r.marca as string))]; // Convertir a string (ya filtramos los undefined)
       
       // Verificar si hay parámetros de tipo en la URL
       this.route.queryParams.subscribe(params => {
@@ -56,20 +62,38 @@ export class RepuestosComponent implements OnInit {
   }
 
   aplicarFiltros(): void {
-    // Comenzar con todos los repuestos
-    let resultados = this.repuestos;
+    if (this.tipoActual === 'todos' && this.marcaSeleccionada === 'todas') {
+      // Si no hay filtros, mostrar todos los repuestos
+      this.repuestosFiltrados = this.repuestos;
+      return;
+    }
     
-    // Aplicar filtro de tipo si no es 'todos'
+    if (this.tipoActual !== 'todos' && this.marcaSeleccionada === 'todas') {
+      // Solo filtrar por subcategoría
+      this.productoService.getProductosPorSubcategoria(this.tipoActual).subscribe(productos => {
+        this.repuestosFiltrados = productos;
+      });
+      return;
+    }
+    
+    // Comenzar con todos los repuestos o filtrados por subcategoría
     if (this.tipoActual !== 'todos') {
-      resultados = resultados.filter(repuesto => repuesto.subcategoria === this.tipoActual);
+      this.productoService.getProductosPorSubcategoria(this.tipoActual).subscribe(productos => {
+        // Aplicar filtro adicional por marca si es necesario
+        if (this.marcaSeleccionada !== 'todas') {
+          this.repuestosFiltrados = productos.filter(p => p.marca === this.marcaSeleccionada);
+        } else {
+          this.repuestosFiltrados = productos;
+        }
+      });
+    } else {
+      // Solo filtrar por marca
+      if (this.marcaSeleccionada !== 'todas') {
+        this.repuestosFiltrados = this.repuestos.filter(p => p.marca === this.marcaSeleccionada);
+      } else {
+        this.repuestosFiltrados = this.repuestos;
+      }
     }
-    
-    // Aplicar filtro de marca si no es 'todas'
-    if (this.marcaSeleccionada !== 'todas') {
-      resultados = resultados.filter(repuesto => repuesto.marca === this.marcaSeleccionada);
-    }
-    
-    this.repuestosFiltrados = resultados;
   }
 
   verDetalles(id: number): void {

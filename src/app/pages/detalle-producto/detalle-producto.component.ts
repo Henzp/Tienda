@@ -10,6 +10,7 @@ import { Producto } from '../../models/producto';
 })
 export class DetalleProductoComponent implements OnInit {
   producto: Producto | undefined;
+  productosRelacionados: Producto[] = []; // Nueva propiedad para productos relacionados
   imagenActual: string = '';
   imagenIndex: number = 0;
   imagenZoom: boolean = false;
@@ -83,6 +84,7 @@ export class DetalleProductoComponent implements OnInit {
   }
   
   cargarProducto(id: number): void {
+    // Usar el método getProductoById del servicio actualizado
     this.productoService.getProductoById(id).subscribe(
       producto => {
         this.producto = producto;
@@ -102,6 +104,9 @@ export class DetalleProductoComponent implements OnInit {
           // Establecer la imagen principal
           this.imagenActual = this.imagenes[0];
           this.imagenIndex = 0;
+          
+          // Cargar productos relacionados
+          this.cargarProductosRelacionados(producto.categoria);
         } else {
           this.error = true;
         }
@@ -113,6 +118,16 @@ export class DetalleProductoComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+  
+  // Nuevo método para cargar productos relacionados
+  cargarProductosRelacionados(categoria: string): void {
+    this.productoService.getProductosPorCategoria(categoria).subscribe(productos => {
+      // Filtrar para excluir el producto actual y mostrar solo 4
+      this.productosRelacionados = productos
+        .filter(p => p.id !== this.producto?.id)
+        .slice(0, 4);
+    });
   }
   
   cambiarImagen(imagen: string): void {

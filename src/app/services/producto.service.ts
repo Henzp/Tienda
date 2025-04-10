@@ -317,7 +317,7 @@ export class ProductoService {
       precio: 28900,
       imagenUrl: 'assets/Transmision/cadena-regina-525-sportbike.jpg',
       categoria: 'Repuestos',
-      subcategoria: 'transmision',
+      subcategoria: 'cadena',
       destacado: false,
       sku: 'MLC1809761350',
       marca: 'Regina',

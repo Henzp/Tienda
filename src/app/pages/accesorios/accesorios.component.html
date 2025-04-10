@@ -2,10 +2,10 @@
     <h1>Accesorios para Motos</h1>
     
     <div class="descripcion-categoria">
-        <p>Descubre nuestra amplia gama de accesorios para mejorar tu experiencia de conducción. Desde puños calefaccionados hasta soportes para smartphone, tenemos todo lo que necesitas.</p>
+        <p>Descubre nuestra amplia selección de accesorios de alta calidad para personalizar tu moto y mejorar tu experiencia de conducción.</p>
     </div>
     
-    <div class="filtros-marca" *ngIf="marcas.length > 1">
+    <div class="filtros-marca">
         <h3>Filtrar por marca:</h3>
         <div class="botones-marca">
             <button 
@@ -24,18 +24,20 @@
     
     <!-- Mensaje si no hay productos -->
     <div class="no-productos" *ngIf="accesoriosFiltrados.length === 0">
-        <p>No hay accesorios disponibles con los filtros aplicados.</p>
-        <button (click)="filtrarPorMarca('todas')" *ngIf="accesorios.length > 0">Ver todos los accesorios</button>
+        <p>No hay accesorios disponibles para esta marca en este momento.</p>
+        <button (click)="filtrarPorMarca('todas')">Ver todos los accesorios</button>
     </div>
     
     <!-- Grid de productos -->
     <div class="productos-grid" *ngIf="accesoriosFiltrados.length > 0">
         <div class="producto-card" *ngFor="let accesorio of accesoriosFiltrados">
             <img [src]="accesorio.imagenUrl" [alt]="accesorio.nombre">
-            <h3>{{ accesorio.nombre }}</h3>
-            <div class="marca" *ngIf="accesorio.marca">{{ accesorio.marca }}</div>
-            <div class="sku" *ngIf="accesorio.sku">SKU: {{ accesorio.sku }}</div>
-            <div class="precio">${{ accesorio.precio | number }}</div>
+            <div class="card-content">
+                <h3 class="producto-titulo">{{ accesorio.nombre }}</h3>
+                <p class="producto-descripcion">{{ accesorio.descripcion }}</p>
+                <p class="producto-sku" *ngIf="accesorio.sku">SKU: {{ accesorio.sku }}</p>
+                <p class="precio">${{ accesorio.precio | number }}</p>
+            </div>
             <button class="ver-detalles" (click)="verDetalles(accesorio.id)">Ver Detalles</button>
         </div>
     </div>

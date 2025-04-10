@@ -20,7 +20,7 @@ export class AccesoriosComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Cargar productos de la categoría Accesorios utilizando el nuevo método
+    // Usar el nuevo método getProductosPorCategoria
     this.productoService.getProductosPorCategoria('Accesorios').subscribe(productos => {
       this.accesorios = productos;
       this.accesoriosFiltrados = productos;

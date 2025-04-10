@@ -9,7 +9,7 @@ import { Producto } from '../../models/producto';
   styleUrls: ['./detalle-producto.component.css']
 })
 export class DetalleProductoComponent implements OnInit {
-  producto: Producto | null = null; // Cambio aquí para que acepte null
+  producto: Producto | null = null;
   productosRelacionados: Producto[] = [];
   imagenActual: string = '';
   imagenIndex: number = 0;
@@ -18,7 +18,7 @@ export class DetalleProductoComponent implements OnInit {
   error: boolean = false;
   cantidad: number = 1;
   categoriaUrl: string = '';
-  zoomPosition: string = 'center'; // Posición inicial del zoom
+  zoomPosition: string = 'center';
   
   // Aquí podrías añadir imágenes adicionales por producto
   imagenesAdicionales: { [key: number]: string[] } = {
@@ -120,7 +120,7 @@ export class DetalleProductoComponent implements OnInit {
     );
   }
   
-  // Nuevo método para cargar productos relacionados
+  // Método para cargar productos relacionados
   cargarProductosRelacionados(categoria: string): void {
     this.productoService.getProductosPorCategoria(categoria).subscribe(productos => {
       // Filtrar para excluir el producto actual y mostrar solo 4

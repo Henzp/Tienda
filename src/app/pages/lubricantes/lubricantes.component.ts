@@ -20,7 +20,7 @@ export class LubricantesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Cargar productos de la categoría Lubricantes
+    // Usar el nuevo método getProductosPorCategoria
     this.productoService.getProductosPorCategoria('Lubricantes').subscribe(productos => {
       this.lubricantes = productos;
       this.lubricantesFiltrados = productos;

@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProductoService } from '../../services/producto.service';
 import { Producto } from '../../models/producto';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-productos',
@@ -12,7 +11,7 @@ import { Router } from '@angular/router';
 export class ProductosComponent implements OnInit {
   productos: Producto[] = [];
   productosFiltrados: Producto[] = [];
-  categorias: string[] = []; // Nueva propiedad para almacenar las categorías disponibles
+  categorias: string[] = [];
   categoriaActual: string = 'todos';
   terminoBusqueda: string = '';
 
@@ -23,7 +22,7 @@ export class ProductosComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Obtener las categorías disponibles
+    // Obtener categorías
     this.productoService.getCategorias().subscribe(categorias => {
       this.categorias = categorias;
     });
@@ -48,7 +47,7 @@ export class ProductosComponent implements OnInit {
   buscarProductos(termino: string): void {
     this.terminoBusqueda = termino;
     
-    // Usa el método buscarProductos del servicio actualizado
+    // Usar el método buscarProductos del servicio
     this.productoService.buscarProductos(termino).subscribe(resultados => {
       this.productosFiltrados = resultados;
     });
@@ -59,12 +58,9 @@ export class ProductosComponent implements OnInit {
     this.terminoBusqueda = ''; // Limpiar término de búsqueda
     
     if (categoria === 'todos') {
-      // Si es "todos", usar el método getProductos
-      this.productoService.getProductos().subscribe(productos => {
-        this.productosFiltrados = productos;
-      });
+      this.productosFiltrados = this.productos;
     } else {
-      // Utilizar el nuevo método getProductosPorCategoria
+      // Usar el método getProductosPorCategoria
       this.productoService.getProductosPorCategoria(categoria).subscribe(productos => {
         this.productosFiltrados = productos;
       });

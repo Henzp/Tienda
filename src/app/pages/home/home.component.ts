@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ProductoService } from '../../services/producto.service';
 import { Producto } from '../../models/producto';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -11,8 +11,8 @@ import { Router } from '@angular/router';
 export class HomeComponent implements OnInit {
   productosDestacados: Producto[] = [];
   categorias: string[] = [];
-  // Estilo de fondo para el banner principal
-heroBackgroundStyle: string = 'url("assets/moto-hero.jpg")';
+  // Añadimos la opacidad directamente en el estilo del fondo
+  heroBackgroundStyle: string = 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("assets/banner-principal.jpg")';
 
   constructor(
     private productoService: ProductoService,
@@ -25,7 +25,7 @@ heroBackgroundStyle: string = 'url("assets/moto-hero.jpg")';
       this.productosDestacados = productos;
     });
     
-    // Cargar categorías disponibles para mostrar en navegación
+    // Cargar categorías disponibles
     this.productoService.getCategorias().subscribe(categorias => {
       this.categorias = categorias;
     });

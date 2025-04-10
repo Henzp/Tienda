@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ProductoService } from '../../services/producto.service';
 import { Producto } from '../../models/producto';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-guantes',
@@ -20,17 +20,15 @@ export class GuantesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.productoService.getProductos().subscribe(productos => {
-      // Filtrar solo los productos de categoría 'Guantes'
-      this.guantes = productos.filter(producto => 
-        producto.categoria === 'Guantes'
-      );
+    // Cargar productos de la categoría Guantes
+    this.productoService.getProductosPorCategoria('Guantes').subscribe(productos => {
+      this.guantes = productos;
+      this.guantesFiltrados = productos;
       
-      // Inicialmente mostrar todos los guantes
-      this.guantesFiltrados = this.guantes;
-      
-      // Obtener las marcas únicas
-      this.marcas = [...new Set(this.guantes.map(guante => guante.marca || 'Sin marca'))];
+      // Obtener marcas únicas
+      this.marcas = [...new Set(productos
+        .filter(p => p.marca)
+        .map(p => p.marca as string))];
     });
   }
 
@@ -40,9 +38,7 @@ export class GuantesComponent implements OnInit {
     if (marca === 'todas') {
       this.guantesFiltrados = this.guantes;
     } else {
-      this.guantesFiltrados = this.guantes.filter(
-        guante => guante.marca === marca
-      );
+      this.guantesFiltrados = this.guantes.filter(p => p.marca === marca);
     }
   }
 

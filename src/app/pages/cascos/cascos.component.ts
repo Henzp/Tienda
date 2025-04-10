@@ -20,17 +20,15 @@ export class CascosComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.productoService.getProductos().subscribe(productos => {
-      // Filtrar solo los productos de categoría 'Cascos'
-      this.cascos = productos.filter(producto => 
-        producto.categoria === 'Cascos'
-      );
+    // Cargar productos de la categoría Cascos
+    this.productoService.getProductosPorCategoria('Cascos').subscribe(productos => {
+      this.cascos = productos;
+      this.cascosFiltrados = productos;
       
-      // Inicialmente mostrar todos los cascos
-      this.cascosFiltrados = this.cascos;
-      
-      // Obtener las marcas únicas
-      this.marcas = [...new Set(this.cascos.map(casco => casco.marca || 'Sin marca'))];
+      // Obtener marcas únicas
+      this.marcas = [...new Set(productos
+        .filter(p => p.marca)
+        .map(p => p.marca as string))];
     });
   }
 
@@ -40,9 +38,7 @@ export class CascosComponent implements OnInit {
     if (marca === 'todas') {
       this.cascosFiltrados = this.cascos;
     } else {
-      this.cascosFiltrados = this.cascos.filter(
-        casco => casco.marca === marca
-      );
+      this.cascosFiltrados = this.cascos.filter(p => p.marca === marca);
     }
   }
 

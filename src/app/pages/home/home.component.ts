@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ProductoService } from '../../services/producto.service';
+import { Producto } from '../../models/producto';
 import { Router } from '@angular/router';
-import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -8,13 +9,41 @@ import { OnInit } from '@angular/core';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  heroImageUrl: string = 'assets/moto-hero.jpg';
-  heroBackgroundStyle: string = '';
+  productosDestacados: Producto[] = [];
+  categorias: string[] = [];
+  // Estilo de fondo para el banner principal
+heroBackgroundStyle: string = 'url("assets/moto-hero.jpg")';
 
-  constructor() { }
+  constructor(
+    private productoService: ProductoService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
-    // Construye el estilo completo para el fondo, incluyendo el gradiente
-    this.heroBackgroundStyle = `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${this.heroImageUrl})`;
+    // Cargar productos destacados
+    this.productoService.getProductosDestacados().subscribe(productos => {
+      this.productosDestacados = productos;
+    });
+    
+    // Cargar categorías disponibles para mostrar en navegación
+    this.productoService.getCategorias().subscribe(categorias => {
+      this.categorias = categorias;
+    });
+  }
+
+  verDetalles(id: number): void {
+    this.router.navigate(['/producto', id]);
+  }
+
+  irACategoria(categoria: string): void {
+    // Convertir el nombre de la categoría para la URL
+    let categoriaUrl = categoria.toLowerCase();
+    
+    // Ajustar acentos si es necesario
+    if (categoriaUrl === 'neumáticos') {
+      categoriaUrl = 'neumaticos';
+    }
+    
+    this.router.navigate(['/' + categoriaUrl]);
   }
 }

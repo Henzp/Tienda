@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ProductoService } from '../../services/producto.service';
 import { Producto } from '../../models/producto';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-lubricantes',
@@ -16,21 +16,19 @@ export class LubricantesComponent implements OnInit {
 
   constructor(
     private productoService: ProductoService,
-    private router: Router  
+    private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.productoService.getProductos().subscribe(productos => {
-      // Filtrar solo los productos de categoría 'Lubricantes'
-      this.lubricantes = productos.filter(producto => 
-        producto.categoria === 'Lubricantes'
-      );
+    // Cargar productos de la categoría Lubricantes
+    this.productoService.getProductosPorCategoria('Lubricantes').subscribe(productos => {
+      this.lubricantes = productos;
+      this.lubricantesFiltrados = productos;
       
-      // Inicialmente mostrar todos los lubricantes
-      this.lubricantesFiltrados = this.lubricantes;
-      
-      // Obtener las marcas únicas
-      this.marcas = [...new Set(this.lubricantes.map(lubricante => lubricante.marca || 'Sin marca'))];
+      // Obtener marcas únicas
+      this.marcas = [...new Set(productos
+        .filter(p => p.marca)
+        .map(p => p.marca as string))];
     });
   }
 
@@ -40,13 +38,11 @@ export class LubricantesComponent implements OnInit {
     if (marca === 'todas') {
       this.lubricantesFiltrados = this.lubricantes;
     } else {
-      this.lubricantesFiltrados = this.lubricantes.filter(
-        lubricante => lubricante.marca === marca
-      );
+      this.lubricantesFiltrados = this.lubricantes.filter(p => p.marca === marca);
     }
   }
+
   verDetalles(id: number): void {
     this.router.navigate(['/producto', id]);
   }
-   
 }

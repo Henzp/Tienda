@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ProductoService } from '../../services/producto.service';
 import { Producto } from '../../models/producto';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-accesorios',
@@ -10,6 +10,9 @@ import { Router } from '@angular/router';
 })
 export class AccesoriosComponent implements OnInit {
   accesorios: Producto[] = [];
+  accesoriosFiltrados: Producto[] = [];
+  marcas: string[] = [];
+  marcaSeleccionada: string = 'todas';
 
   constructor(
     private productoService: ProductoService,
@@ -17,12 +20,26 @@ export class AccesoriosComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Obtener todos los productos y filtrar solo los de categoría 'Accesorios'
-    this.productoService.getProductos().subscribe(productos => {
-      this.accesorios = productos.filter(producto => 
-        producto.categoria === 'Accesorios'
-      );
+    // Cargar productos de la categoría Accesorios utilizando el nuevo método
+    this.productoService.getProductosPorCategoria('Accesorios').subscribe(productos => {
+      this.accesorios = productos;
+      this.accesoriosFiltrados = productos;
+      
+      // Obtener marcas únicas
+      this.marcas = [...new Set(productos
+        .filter(p => p.marca)
+        .map(p => p.marca as string))];
     });
+  }
+
+  filtrarPorMarca(marca: string): void {
+    this.marcaSeleccionada = marca;
+    
+    if (marca === 'todas') {
+      this.accesoriosFiltrados = this.accesorios;
+    } else {
+      this.accesoriosFiltrados = this.accesorios.filter(p => p.marca === marca);
+    }
   }
 
   verDetalles(id: number): void {

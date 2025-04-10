@@ -9,8 +9,8 @@ import { Producto } from '../../models/producto';
   styleUrls: ['./detalle-producto.component.css']
 })
 export class DetalleProductoComponent implements OnInit {
-  producto: Producto | undefined;
-  productosRelacionados: Producto[] = []; // Nueva propiedad para productos relacionados
+  producto: Producto | null = null; // Cambio aquí para que acepte null
+  productosRelacionados: Producto[] = [];
   imagenActual: string = '';
   imagenIndex: number = 0;
   imagenZoom: boolean = false;
@@ -87,7 +87,7 @@ export class DetalleProductoComponent implements OnInit {
     // Usar el método getProductoById del servicio actualizado
     this.productoService.getProductoById(id).subscribe(
       producto => {
-        this.producto = producto;
+        this.producto = producto || null;
         
         if (producto) {
           // Generar la URL de la categoría para el breadcrumb

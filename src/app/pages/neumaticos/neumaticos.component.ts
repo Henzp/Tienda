@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ProductoService } from '../../services/producto.service';
 import { Producto } from '../../models/producto';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-neumaticos',
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 })
 export class NeumaticosComponent implements OnInit {
   neumaticos: Producto[] = [];
-  neumaticosFiltered: Producto[] = [];
+  neumaticosFiltrados: Producto[] = [];
   marcas: string[] = [];
   marcaSeleccionada: string = 'todas';
 
@@ -20,17 +20,15 @@ export class NeumaticosComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.productoService.getProductos().subscribe(productos => {
-      // Filtrar solo los productos de categoría 'Neumáticos'
-      this.neumaticos = productos.filter(producto => 
-        producto.categoria === 'Neumáticos'
-      );
+    // Usar el nuevo método getProductosPorCategoria
+    this.productoService.getProductosPorCategoria('Neumáticos').subscribe(productos => {
+      this.neumaticos = productos;
+      this.neumaticosFiltrados = productos;
       
-      // Inicialmente mostrar todos los neumáticos
-      this.neumaticosFiltered = this.neumaticos;
-      
-      // Obtener las marcas únicas
-      this.marcas = [...new Set(this.neumaticos.map(neumatico => neumatico.marca || 'Sin marca'))];
+      // Obtener marcas únicas
+      this.marcas = [...new Set(productos
+        .filter(p => p.marca)
+        .map(p => p.marca as string))];
     });
   }
 
@@ -38,11 +36,9 @@ export class NeumaticosComponent implements OnInit {
     this.marcaSeleccionada = marca;
     
     if (marca === 'todas') {
-      this.neumaticosFiltered = this.neumaticos;
+      this.neumaticosFiltrados = this.neumaticos;
     } else {
-      this.neumaticosFiltered = this.neumaticos.filter(
-        neumatico => neumatico.marca === marca
-      );
+      this.neumaticosFiltrados = this.neumaticos.filter(p => p.marca === marca);
     }
   }
 

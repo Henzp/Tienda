@@ -403,7 +403,6 @@ export class ProductoService {
       this.repuestosPorSubcategoria.get(producto.subcategoria)!.push(producto);
     }
   }
-  
   // Método para agregar un nuevo producto
   agregarNuevoProducto(producto: Omit<Producto, 'id'>): Producto {
     // Asignar un nuevo ID
@@ -524,3 +523,4 @@ export class ProductoService {
     
     return of(true);
   }
+}

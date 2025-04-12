@@ -1,0 +1,114 @@
+<div class="producto-form-container">
+    <div class="header">
+      <h1>{{ modo === 'crear' ? 'Nuevo Producto' : 'Editar Producto' }}</h1>
+      <button class="btn-volver" (click)="volver()">Volver a la lista</button>
+    </div>
+    
+    <div class="loading" *ngIf="cargando">Cargando producto...</div>
+    
+    <div class="error-message" *ngIf="errorMensaje">{{ errorMensaje }}</div>
+    
+    <form [formGroup]="productoForm" (ngSubmit)="onSubmit()" *ngIf="!cargando">
+      <div class="form-grid">
+        <div class="form-column">
+          <div class="form-group">
+            <label for="nombre">Nombre del producto *</label>
+            <input type="text" id="nombre" formControlName="nombre" class="form-control">
+            <div class="validation-error" *ngIf="productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched">
+              El nombre es obligatorio
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="descripcion">Descripción corta *</label>
+            <textarea id="descripcion" formControlName="descripcion" class="form-control" rows="3"></textarea>
+            <div class="validation-error" *ngIf="productoForm.get('descripcion')?.invalid && productoForm.get('descripcion')?.touched">
+              La descripción es obligatoria
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="descripcionLarga">Descripción detallada</label>
+            <textarea id="descripcionLarga" formControlName="descripcionLarga" class="form-control" rows="6"></textarea>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="precio">Precio *</label>
+              <input type="number" id="precio" formControlName="precio" class="form-control">
+              <div class="validation-error" *ngIf="productoForm.get('precio')?.invalid && productoForm.get('precio')?.touched">
+                El precio es obligatorio y debe ser mayor o igual a 0
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="stock">Stock *</label>
+              <input type="number" id="stock" formControlName="stock" class="form-control">
+              <div class="validation-error" *ngIf="productoForm.get('stock')?.invalid && productoForm.get('stock')?.touched">
+                El stock es obligatorio y debe ser mayor o igual a 0
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-column">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="categoria">Categoría *</label>
+              <select id="categoria" formControlName="categoria" class="form-control">
+                <option value="">Seleccionar categoría</option>
+                <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
+              </select>
+              <div class="validation-error" *ngIf="productoForm.get('categoria')?.invalid && productoForm.get('categoria')?.touched">
+                La categoría es obligatoria
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="subcategoria">Subcategoría</label>
+              <input type="text" id="subcategoria" formControlName="subcategoria" class="form-control">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="marca">Marca</label>
+              <input type="text" id="marca" formControlName="marca" class="form-control">
+            </div>
+            
+            <div class="form-group">
+              <label for="sku">SKU</label>
+              <input type="text" id="sku" formControlName="sku" class="form-control">
+            </div>
+          </div>
+          
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="destacado">
+              <span>Destacar producto en la página principal</span>
+            </label>
+          </div>
+          
+          <div class="form-group imagen-group">
+            <label>Imagen principal</label>
+            <div class="imagen-preview-container">
+              <div class="imagen-upload-area" (click)="fileInput.click()" [ngClass]="{'has-image': imagenPreview}">
+                <div *ngIf="!imagenPreview" class="upload-message">
+                  <span>Haga clic para seleccionar una imagen</span>
+                </div>
+                <img *ngIf="imagenPreview" [src]="imagenPreview" alt="Vista previa" class="imagen-preview">
+              </div>
+              <input type="file" accept="image/*" (change)="onImagenSeleccionada($event)" #fileInput hidden>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" class="btn-cancelar" (click)="volver()">Cancelar</button>
+        <button type="submit" class="btn-guardar" [disabled]="productoForm.invalid || guardando">
+          {{ guardando ? 'Guardando...' : 'Guardar producto' }}
+        </button>
+      </div>
+    </form>
+  </div>

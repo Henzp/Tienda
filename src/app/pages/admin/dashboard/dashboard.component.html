@@ -1,0 +1,23 @@
+<div class="admin-dashboard">
+    <nav class="admin-nav">
+      <div class="logo">
+        <h1>Panel Admin</h1>
+      </div>
+      
+      <ul class="nav-links">
+        <li>
+          <a routerLink="/admin/productos" routerLinkActive="active">Productos</a>
+        </li>
+        <!-- Puedes agregar más opciones de menú aquí: Categorías, Usuarios, etc. -->
+      </ul>
+      
+      <div class="user-info">
+        <span *ngIf="usuario">{{ usuario.nombre }}</span>
+        <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+      </div>
+    </nav>
+    
+    <div class="admin-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>

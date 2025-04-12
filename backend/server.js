@@ -1,34 +1,35 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-require('dotenv').config();
-
-// Importar rutas
-const productosRoutes = require('./routes/productos');
-
-// Configurar app
+const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Middlewares
+// Middleware
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-// Conectar a MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Conectado a MongoDB'))
-  .catch(err => console.error('Error al conectar a MongoDB:', err));
+// Servir archivos estáticos (para las imágenes)
+app.use('/assets', express.static(path.join(__dirname, '../src/assets')));
 
-// Usar rutas
+// Conexión a MongoDB
+mongoose.connect('mongodb://localhost:27017/tienda', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log('Conectado a MongoDB'))
+.catch(err => console.error('Error al conectar a MongoDB:', err));
+
+// Rutas
+const productosRoutes = require('./routes/productos');
+const authRoutes = require('./routes/auth');
+const adminRoutes = require('./routes/admin');
+
 app.use('/api/productos', productosRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 
-// Ruta base
-app.get('/', (req, res) => {
-  res.send('API de la tienda de motos funcionando');
-});
-
-// Iniciar servidor
+// Puerto del servidor
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en puerto ${PORT}`);
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
 });

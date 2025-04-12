@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -7,8 +6,6 @@ require('dotenv').config();
 
 // Importar rutas
 const productosRoutes = require('./routes/productos');
-// Comentamos o eliminamos la línea que causa el error:
-// const usuariosRoutes = require('./routes/usuarios');
 
 // Configurar app
 const app = express();
@@ -25,8 +22,6 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Usar rutas
 app.use('/api/productos', productosRoutes);
-// Comentamos esta línea también:
-// app.use('/api/usuarios', usuariosRoutes);
 
 // Ruta base
 app.get('/', (req, res) => {

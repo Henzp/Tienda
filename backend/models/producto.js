@@ -1,5 +1,3 @@
-const mongoose = require('mongoose');
-
 const productoSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
   descripcion: { type: String, required: true },
@@ -9,9 +7,8 @@ const productoSchema = new mongoose.Schema({
   imagenesAdicionales: [String],
   categoria: { type: String, required: true },
   subcategoria: { type: String },
-  destacado: { type: Boolean, default: false },
+  destacado: { type: Boolean, default: false }, // Asegúrate de que exista esta propiedad
   sku: { type: String },
-  marca: { type: String }
+  marca: { type: String },
+  stock: { type: Number, default: 0 }
 });
-
-module.exports = mongoose.model('Producto', productoSchema);

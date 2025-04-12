@@ -10,6 +10,7 @@ import { CascosComponent } from './pages/cascos/cascos.component';
 import { ContactoComponent } from './pages/contacto/contacto.component';
 import { GuantesComponent } from './pages/guantes/guantes.component';
 import { DetalleProductoComponent } from './pages/detalle-producto/detalle-producto.component';
+import { DiagnosticoComponent } from './diagnostico/diagnostico.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -22,6 +23,8 @@ const routes: Routes = [
   { path: 'contacto', component: ContactoComponent },
   { path: 'guantes', component: GuantesComponent },
   { path: 'producto/:id', component: DetalleProductoComponent }, // Cambié de 'detalle/:id' a 'producto/:id'
+  { path: 'diagnostico', component: DiagnosticoComponent },
+  // Redirección de rutas 
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: '**', redirectTo: 'home' }
 ];

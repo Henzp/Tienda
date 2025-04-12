@@ -33,4 +33,44 @@ router.get('/categoria/:categoria', async (req, res) => {
   }
 });
 
+// Obtener productos por subcategoría
+router.get('/subcategoria/:subcategoria', async (req, res) => {
+  try {
+    const productos = await Producto.find({ subcategoria: req.params.subcategoria });
+    res.json(productos);
+  } catch (error) {
+    res.status(500).json({ mensaje: error.message });
+  }
+});
+
+router.get('/destacados', async (req, res) => {
+  try {
+    const productos = await Producto.find({ destacado: true });
+    res.json(productos);
+  } catch (error) {
+    console.error('Error al obtener productos destacados:', error);
+    res.status(500).json({ mensaje: error.message });
+  }
+});
+
+// Obtener todas las categorías
+router.get('/categorias/lista', async (req, res) => {
+  try {
+    const categorias = await Producto.distinct('categoria');
+    res.json(categorias);
+  } catch (error) {
+    res.status(500).json({ mensaje: error.message });
+  }
+});
+
+// Obtener todas las subcategorías de repuestos
+router.get('/subcategorias/repuestos', async (req, res) => {
+  try {
+    const subcategorias = await Producto.distinct('subcategoria', { categoria: 'Repuestos' });
+    res.json(subcategorias);
+  } catch (error) {
+    res.status(500).json({ mensaje: error.message });
+  }
+});
+
 module.exports = router;

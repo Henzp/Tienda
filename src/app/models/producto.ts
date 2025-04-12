@@ -1,14 +1,17 @@
+// src/app/models/producto.ts
 export interface Producto {
-  id: number;
+  _id?: string;  // ID de MongoDB
+  id?: number;   // ID antiguo (para compatibilidad)
   nombre: string;
   descripcion: string;
+  descripcionLarga?: string;
   precio: number;
   imagenUrl: string;
+  imagenesAdicionales?: string[];
   categoria: string;
-  subcategoria?: string; // Añadir este campo para clasificar los repuestos
+  subcategoria?: string;
   destacado?: boolean;
   sku?: string;
   marca?: string;
-  descripcionLarga?: string;
-  imagenesAdicionales?: string[];
+  stock?: number;
 }

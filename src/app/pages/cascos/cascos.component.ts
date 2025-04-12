@@ -42,7 +42,9 @@ export class CascosComponent implements OnInit {
     }
   }
 
-  verDetalles(id: number): void {
-    this.router.navigate(['/producto', id]);
+  verDetalles(id: number | string | undefined): void {
+    if (id) {
+      this.router.navigate(['/producto', id]);
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -17,6 +18,7 @@ import { RepuestosComponent } from './pages/repuestos/repuestos.component';
 import { CascosComponent } from './pages/cascos/cascos.component';
 import { GuantesComponent } from './pages/guantes/guantes.component';
 import { DetalleProductoComponent } from './pages/detalle-producto/detalle-producto.component';
+import { DiagnosticoComponent } from './diagnostico/diagnostico.component';
 
 @NgModule({
   declarations: [
@@ -34,12 +36,14 @@ import { DetalleProductoComponent } from './pages/detalle-producto/detalle-produ
     RepuestosComponent,
     CascosComponent,
     GuantesComponent,
-    DetalleProductoComponent
+    DetalleProductoComponent,
+    DiagnosticoComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

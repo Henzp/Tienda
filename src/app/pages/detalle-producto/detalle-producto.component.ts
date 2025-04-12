@@ -47,10 +47,11 @@ export class DetalleProductoComponent implements OnInit {
   
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      const id = Number(params.get('id'));
+      const idParam = params.get('id');
       
-      if (id) {
-        this.cargarProducto(id);
+      if (idParam) {
+        // Pasar el id como string, el servicio se encargará de manejarlo
+        this.cargarProducto(idParam);
       } else {
         this.error = true;
         this.loading = false;
@@ -83,7 +84,7 @@ export class DetalleProductoComponent implements OnInit {
     }
   }
   
-  cargarProducto(id: number): void {
+  cargarProducto(id: string | number): void {
     // Usar el método getProductoById del servicio actualizado
     this.productoService.getProductoById(id).subscribe(
       producto => {
@@ -120,12 +121,21 @@ export class DetalleProductoComponent implements OnInit {
     );
   }
   
-  // Método para cargar productos relacionados
   cargarProductosRelacionados(categoria: string): void {
     this.productoService.getProductosPorCategoria(categoria).subscribe(productos => {
       // Filtrar para excluir el producto actual y mostrar solo 4
       this.productosRelacionados = productos
-        .filter(p => p.id !== this.producto?.id)
+        .filter(p => {
+          // Comparación segura para evitar errores con ids indefinidos
+          if (!this.producto) return true;
+          
+          // Obtener ID del producto actual (usando _id o id, lo que esté disponible)
+          const productoActualId = this.producto._id || this.producto.id;
+          if (!productoActualId || !p.id) return true;
+          
+          // Comparar como string para manejar tanto números como strings
+          return p.id.toString() !== productoActualId.toString();
+        })
         .slice(0, 4);
     });
   }

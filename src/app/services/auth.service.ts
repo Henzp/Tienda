@@ -1,3 +1,4 @@
+// src/app/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
@@ -37,6 +38,7 @@ export class AuthService {
           if (response && response.token) {
             localStorage.setItem('token', response.token);
             localStorage.setItem('usuario', JSON.stringify(response.usuario));
+            this.usuarioSubject.next(response.usuario);
           }
         })
       );

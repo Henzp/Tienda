@@ -1,1 +1,49 @@
-<p>usuario-detalle works!</p>
+<div class="usuario-detalle-container">
+    <div class="header">
+      <h1>Editar Usuario</h1>
+      <button class="btn-volver" (click)="volver()">Volver a la lista</button>
+    </div>
+    
+    <div class="loading-spinner" *ngIf="cargando">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Cargando usuario...</span>
+    </div>
+    
+    <div class="error-message" *ngIf="error">
+      <i class="fas fa-exclamation-circle"></i> {{ error }}
+    </div>
+    
+    <form [formGroup]="usuarioForm" (ngSubmit)="onSubmit()" *ngIf="!cargando">
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" formControlName="nombre" class="form-control">
+        <div class="validation-error" *ngIf="usuarioForm.get('nombre')?.invalid && usuarioForm.get('nombre')?.touched">
+          El nombre es obligatorio
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" formControlName="email" class="form-control">
+        <div class="validation-error" *ngIf="usuarioForm.get('email')?.invalid && usuarioForm.get('email')?.touched">
+          <span *ngIf="usuarioForm.get('email')?.errors?.['required']">El email es obligatorio</span>
+          <span *ngIf="usuarioForm.get('email')?.errors?.['email']">Formato de email inválido</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="rol">Rol</label>
+        <select id="rol" formControlName="rol" class="form-control">
+          <option value="usuario">Usuario</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" class="btn-cancelar" (click)="volver()">Cancelar</button>
+        <button type="submit" class="btn-guardar" [disabled]="usuarioForm.invalid || guardando">
+          {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+        </button>
+      </div>
+    </form>
+  </div>

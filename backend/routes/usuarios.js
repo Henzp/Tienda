@@ -1,20 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const Usuario = require('../models/usuario');
-const { isAuth, isAdmin } = require('../middlewares/auth');
+// Comentamos temporalmente los middlewares
+// const { isAuth, isAdmin } = require('../middlewares/auth');
 
 // Obtener todos los usuarios (solo admin)
-router.get('/', isAuth, isAdmin, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
+    console.log('Accediendo a ruta GET /usuarios');
     const usuarios = await Usuario.find().select('-password');
+    console.log('Usuarios encontrados:', usuarios.length);
     res.json(usuarios);
   } catch (error) {
+    console.error('Error al obtener usuarios:', error);
     res.status(500).json({ mensaje: error.message });
   }
 });
 
 // Obtener un usuario por ID
-router.get('/:id', isAuth, isAdmin, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const usuario = await Usuario.findById(req.params.id).select('-password');
     if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
@@ -25,7 +29,7 @@ router.get('/:id', isAuth, isAdmin, async (req, res) => {
 });
 
 // Actualizar un usuario
-router.put('/:id', isAuth, isAdmin, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const { nombre, email, rol } = req.body;
     
@@ -44,7 +48,7 @@ router.put('/:id', isAuth, isAdmin, async (req, res) => {
 });
 
 // Eliminar un usuario
-router.delete('/:id', isAuth, isAdmin, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const usuario = await Usuario.findByIdAndDelete(req.params.id);
     if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });

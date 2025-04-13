@@ -1,3 +1,4 @@
+// src/app/interceptors/auth.interceptor.ts
 import { Injectable } from '@angular/core';
 import {
   HttpRequest,
@@ -17,6 +18,8 @@ export class AuthInterceptor implements HttpInterceptor {
     const token = this.authService.obtenerToken();
     
     if (token) {
+      console.log('Añadiendo token a la petición:', token.substring(0, 20) + '...');
+      
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`

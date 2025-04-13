@@ -24,36 +24,40 @@ export class LoginComponent {
     });
   }
 
-  onSubmit() {
-    if (this.loginForm.invalid) {
-      return;
-    }
-
-    this.cargando = true;
-    this.errorMensaje = '';
-
-    const { email, password } = this.loginForm.value;
-
-    this.authService.login(email, password).subscribe({
-      next: (respuesta) => {
-        this.cargando = false;
-        if (this.authService.esAdmin()) {
-          this.router.navigate(['/admin/dashboard']);
-        } else {
-          this.errorMensaje = 'No tienes permisos de administrador';
-          this.authService.logout();
-        }
-      },
-      error: (error) => {
-        this.cargando = false;
-        if (error.status === 404) {
-          this.errorMensaje = 'Usuario no encontrado';
-        } else if (error.status === 401) {
-          this.errorMensaje = 'Contraseña incorrecta';
-        } else {
-          this.errorMensaje = 'Error al iniciar sesión';
-        }
-      }
-    });
+  // src/app/pages/admin/login/login.component.ts
+onSubmit() {
+  if (this.loginForm.invalid) {
+    return;
   }
+
+  this.cargando = true;
+  this.errorMensaje = '';
+
+  const { email, password } = this.loginForm.value;
+
+  this.authService.login(email, password).subscribe({
+    next: (respuesta) => {
+      this.cargando = false;
+      
+      // Comprueba la respuesta directamente
+      if (respuesta && respuesta.usuario && respuesta.usuario.rol === 'admin') {
+        console.log('Usuario admin verificado, redirigiendo a panel admin');
+        this.router.navigate(['/admin/productos']);
+      } else {
+        this.errorMensaje = 'No tienes permisos de administrador';
+        this.authService.logout();
+      }
+    },
+    error: (error) => {
+      this.cargando = false;
+      if (error.status === 404) {
+        this.errorMensaje = 'Usuario no encontrado';
+      } else if (error.status === 401) {
+        this.errorMensaje = 'Contraseña incorrecta';
+      } else {
+        this.errorMensaje = 'Error al iniciar sesión';
+      }
+    }
+  });
+}
 }

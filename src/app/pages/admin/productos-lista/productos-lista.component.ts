@@ -1,6 +1,7 @@
+// productos-lista.component.ts
 import { Component, OnInit } from '@angular/core';
-import { AdminService } from '../../../services/admin.service';
 import { Router } from '@angular/router';
+import { AdminService } from '../../../services/admin.service';
 
 @Component({
   selector: 'app-productos-lista',
@@ -9,6 +10,8 @@ import { Router } from '@angular/router';
 })
 export class ProductosListaComponent implements OnInit {
   productos: any[] = [];
+  filteredProducts: any[] = [];
+  searchTerm: string = '';
   cargando: boolean = true;
   error: string = '';
   
@@ -26,6 +29,7 @@ export class ProductosListaComponent implements OnInit {
     this.adminService.getProductos().subscribe({
       next: (productos) => {
         this.productos = productos;
+        this.filteredProducts = [...productos];
         this.cargando = false;
       },
       error: (error) => {
@@ -36,12 +40,26 @@ export class ProductosListaComponent implements OnInit {
     });
   }
 
-  verProducto(id: string) {
-    this.router.navigate(['/admin/productos/editar', id]);
+  filterProducts() {
+    if (!this.searchTerm) {
+      this.filteredProducts = [...this.productos];
+      return;
+    }
+    
+    const term = this.searchTerm.toLowerCase();
+    this.filteredProducts = this.productos.filter(producto => 
+      producto.nombre.toLowerCase().includes(term) || 
+      producto.categoria.toLowerCase().includes(term) ||
+      (producto.marca && producto.marca.toLowerCase().includes(term))
+    );
   }
 
   nuevoProducto() {
     this.router.navigate(['/admin/productos/nuevo']);
+  }
+
+  editarProducto(id: string) {
+    this.router.navigate(['/admin/productos/editar', id]);
   }
 
   eliminarProducto(id: string, event: Event) {
@@ -51,12 +69,17 @@ export class ProductosListaComponent implements OnInit {
       this.adminService.eliminarProducto(id).subscribe({
         next: () => {
           this.productos = this.productos.filter(producto => producto._id !== id);
+          this.filterProducts();
         },
         error: (error) => {
           console.error('Error al eliminar producto:', error);
-          alert('No se pudo eliminar el producto. Inténtelo de nuevo.');
+          this.error = 'No se pudo eliminar el producto. Inténtelo de nuevo.';
         }
       });
     }
+  }
+
+  handleImageError(event: any) {
+    event.target.src = 'assets/placeholder-producto.jpg';
   }
 }

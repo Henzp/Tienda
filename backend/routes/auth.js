@@ -1,13 +1,15 @@
+// E:\Proyecto\tienda\backend\routes\auth.js
 const express = require('express');
 const router = express.Router();
 const Usuario = require('../models/usuario');
-const { generarToken } = require('../config/jwt');
-const { isAuth } = require('../middlewares/auth');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-// Registro de usuario
+// Ruta para registro de usuario
 router.post('/registro', async (req, res) => {
   try {
-    const { email, password, nombre } = req.body;
+    console.log('Intentando registrar usuario:', req.body);
+    const { nombre, email, password } = req.body;
     
     // Verificar si el usuario ya existe
     const usuarioExistente = await Usuario.findOne({ email });
@@ -15,19 +17,26 @@ router.post('/registro', async (req, res) => {
       return res.status(400).json({ mensaje: 'El email ya está registrado' });
     }
     
+    // Determinar si es el primer usuario (para asignarle rol admin)
+    const count = await Usuario.countDocuments();
+    const rol = count === 0 ? 'admin' : 'usuario';
+    
     // Crear nuevo usuario
     const usuario = new Usuario({
-      email,
-      password,
       nombre,
-      // Para el primer usuario, puedes asignarle rol de admin
-      rol: await Usuario.countDocuments() === 0 ? 'admin' : 'usuario'
+      email,
+      password, // Se encriptará en el middleware pre-save
+      rol
     });
     
     await usuario.save();
     
-    // Generar token
-    const token = generarToken(usuario);
+    // Generar token JWT
+    const token = jwt.sign(
+      { id: usuario._id, email: usuario.email, rol: usuario.rol },
+      'clave_secreta_jwt', // Deberías usar una variable de entorno para esto
+      { expiresIn: '24h' }
+    );
     
     res.status(201).json({
       mensaje: 'Usuario registrado exitosamente',
@@ -45,7 +54,7 @@ router.post('/registro', async (req, res) => {
   }
 });
 
-// Login
+// Ruta para login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -56,14 +65,19 @@ router.post('/login', async (req, res) => {
       return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     }
     
-    // Verificar contraseña
-    const passwordValida = await usuario.compararPassword(password);
+    // Verificar contraseña - asegúrate de usar bcrypt.compare
+    const passwordValida = await bcrypt.compare(password, usuario.password);
+    
     if (!passwordValida) {
       return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
     }
     
     // Generar token
-    const token = generarToken(usuario);
+    const token = jwt.sign(
+      { id: usuario._id, email: usuario.email, rol: usuario.rol },
+      'clave_secreta_jwt',
+      { expiresIn: '24h' }
+    );
     
     res.json({
       mensaje: 'Login exitoso',
@@ -78,21 +92,6 @@ router.post('/login', async (req, res) => {
   } catch (error) {
     console.error('Error al iniciar sesión:', error);
     res.status(500).json({ mensaje: 'Error al iniciar sesión', error: error.message });
-  }
-});
-
-// Obtener perfil del usuario autenticado
-router.get('/perfil', isAuth, async (req, res) => {
-  try {
-    const usuario = await Usuario.findById(req.usuario.id).select('-password');
-    if (!usuario) {
-      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
-    }
-    
-    res.json(usuario);
-  } catch (error) {
-    console.error('Error al obtener perfil:', error);
-    res.status(500).json({ mensaje: 'Error al obtener perfil', error: error.message });
   }
 });
 

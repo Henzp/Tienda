@@ -1,23 +1,72 @@
-<div class="admin-dashboard">
-    <nav class="admin-nav">
-      <div class="logo">
-        <h1>Panel Admin</h1>
+<!-- dashboard.component.html -->
+<div class="dashboard-container">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon products">
+        <i class="fas fa-box"></i>
       </div>
-      
-      <ul class="nav-links">
-        <li>
-          <a routerLink="/admin/productos" routerLinkActive="active">Productos</a>
-        </li>
-        <!-- Puedes agregar más opciones de menú aquí: Categorías, Usuarios, etc. -->
-      </ul>
-      
-      <div class="user-info">
-        <span *ngIf="usuario">{{ usuario.nombre }}</span>
-        <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+      <div class="stat-details">
+        <h3>Productos</h3>
+        <p class="stat-number">{{ stats.totalProductos }}</p>
       </div>
-    </nav>
+    </div>
     
-    <div class="admin-content">
-      <router-outlet></router-outlet>
+    <div class="stat-card">
+      <div class="stat-icon categories">
+        <i class="fas fa-tags"></i>
+      </div>
+      <div class="stat-details">
+        <h3>Categorías</h3>
+        <p class="stat-number">{{ stats.totalCategorias }}</p>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon featured">
+        <i class="fas fa-star"></i>
+      </div>
+      <div class="stat-details">
+        <h3>Destacados</h3>
+        <p class="stat-number">{{ stats.productosDestacados }}</p>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon users">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-details">
+        <h3>Usuarios</h3>
+        <p class="stat-number">{{ stats.totalUsuarios }}</p>
+      </div>
     </div>
   </div>
+  
+  <div class="dashboard-content">
+    <div class="recent-products">
+      <div class="section-header">
+        <h2>Productos recientes</h2>
+        <a routerLink="/admin/productos">Ver todos</a>
+      </div>
+      
+      <div class="product-list">
+        <div class="product-item" *ngFor="let producto of recentProducts">
+          <img [src]="producto.imagenUrl" [alt]="producto.nombre" (error)="handleImageError($event)">
+          <div class="product-info">
+            <h3>{{ producto.nombre }}</h3>
+            <p class="category">{{ producto.categoria }}</p>
+            <p class="price">${{ producto.precio | number:'1.2-2' }}</p>
+          </div>
+          <div class="product-actions">
+            <button (click)="verProducto(producto._id)">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button (click)="editarProducto(producto._id)">
+              <i class="fas fa-edit"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

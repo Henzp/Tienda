@@ -7,7 +7,8 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class AdminService {
-  private apiUrl = environment.apiUrl + '/admin';
+  // Cambiar de private a public
+  public apiUrl = environment.apiUrl + '/admin';
 
   constructor(private http: HttpClient) { }
 
@@ -39,5 +40,25 @@ export class AdminService {
   // Subir imágenes adicionales
   subirImagenesAdicionales(id: string, imagenesData: FormData): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/productos/${id}/imagenes`, imagenesData);
+  }
+
+  // Obtener todos los usuarios
+  getUsuarios(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/usuarios`);
+  }
+
+  // Obtener un usuario por ID
+  getUsuario(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/usuarios/${id}`);
+  }
+
+  // Actualizar un usuario
+  actualizarUsuario(id: string, userData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/usuarios/${id}`, userData);
+  }
+
+  // Eliminar un usuario
+  eliminarUsuario(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/usuarios/${id}`);
   }
 }

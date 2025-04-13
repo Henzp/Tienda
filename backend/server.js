@@ -12,7 +12,7 @@ app.use(express.json());
 app.use('/assets', express.static(path.join(__dirname, '../src/assets')));
 
 // Conexión a MongoDB
-mongoose.connect('mongodb://localhost:27017/tienda', {
+mongoose.connect('mongodb://localhost:27017/tiendamotos', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
@@ -23,7 +23,9 @@ mongoose.connect('mongodb://localhost:27017/tienda', {
 const productosRoutes = require('./routes/productos');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
+const usuariosRoutes = require('./routes/usuarios');
 
+app.use('/api/admin/usuarios', usuariosRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);

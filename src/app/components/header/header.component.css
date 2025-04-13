@@ -133,6 +133,35 @@ nav ul li a:hover, nav ul li a.active {
 .dropdown a i {
   margin-left: 5px;
 }
+.account-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.account-dropdown .dropdown-toggle {
+  text-decoration: none;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.account-dropdown .dropdown-toggle i {
+  margin-right: 5px;
+}
+
+.account-dropdown .dropdown-menu {
+  right: 0;
+  left: auto;
+  min-width: 180px;
+}
+
+.dropdown-item {
+  padding: 8px 16px;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
 
 @media (max-width: 768px) {
   .container {

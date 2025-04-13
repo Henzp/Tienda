@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -22,6 +21,7 @@ import { GuantesComponent } from './pages/guantes/guantes.component';
 import { DetalleProductoComponent } from './pages/detalle-producto/detalle-producto.component';
 import { DiagnosticoComponent } from './diagnostico/diagnostico.component';
 
+
 // Componentes Admin
 import { LoginComponent } from './pages/admin/login/login.component';
 import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
@@ -30,6 +30,12 @@ import { ProductoFormComponent } from './pages/admin/producto-form/producto-form
 
 // Interceptor para autenticación
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { SelectorPerfilComponent } from './pages/selector-perfil/selector-perfil.component';
+import { RegistroComponent } from './pages/registro/registro.component';
+import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
+import { DefaultLayoutComponent } from './layouts/default-layout/default-layout.component';
+import { UsuariosListaComponent } from './pages/admin/usuarios-lista/usuarios-lista.component';
+import { UsuarioDetalleComponent } from './pages/admin/usuario-detalle/usuario-detalle.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +58,13 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     LoginComponent,
     DashboardComponent,
     ProductosListaComponent,
-    ProductoFormComponent
+    ProductoFormComponent,
+    SelectorPerfilComponent,
+    RegistroComponent,
+    AdminLayoutComponent,
+    DefaultLayoutComponent,
+    UsuariosListaComponent,
+    UsuarioDetalleComponent
   ],
   imports: [
     BrowserModule,

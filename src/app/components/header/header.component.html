@@ -1,48 +1,78 @@
 <header>
-    <div class="header-top">
-      <div class="container">
-        <div class="logo">
-          <a routerLink="/home">
-            <img src="assets/logo.png" alt="Moto Moto Store">
-          </a>
+  <div class="header-top">
+    <div class="container">
+      <div class="logo">
+        <a routerLink="/home">
+          <img src="assets/logo.png" alt="Moto Moto Store">
+        </a>
+      </div>
+      
+      <div class="search-bar">
+        <input type="text" placeholder="Buscar productos..." [(ngModel)]="searchTerm" (keyup.enter)="buscar()">
+        <button (click)="buscar()"><i class="fas fa-search"></i></button>
+      </div>
+      
+      <div class="user-actions">
+        <!-- Sección de usuario/cuenta -->
+        <div class="account-menu">
+          <ng-container *ngIf="!authService.estaLogueado(); else usuarioLogueado">
+            <a routerLink="/login" class="login-btn">
+              <i class="fas fa-user"></i> Iniciar sesión
+            </a>
+          </ng-container>
+          
+          <ng-template #usuarioLogueado>
+            <div class="dropdown">
+              <a class="dropdown-toggle" (click)="toggleDropdown()">
+                <i class="fas fa-user"></i> {{ nombreUsuario }}
+              </a>
+              <div class="dropdown-menu" [class.show]="dropdownVisible">
+                <a routerLink="/perfil">Mi perfil</a>
+                <a routerLink="/pedidos">Mis pedidos</a>
+                <ng-container *ngIf="authService.esAdmin()">
+                  <div class="dropdown-divider"></div>
+                  <a routerLink="/admin/productos">Panel de administración</a>
+                </ng-container>
+                <div class="dropdown-divider"></div>
+                <a (click)="cerrarSesion()">Cerrar sesión</a>
+              </div>
+            </div>
+          </ng-template>
         </div>
-        <div class="search-bar">
-          <input type="text" placeholder="Buscar productos..." [(ngModel)]="searchTerm" (keyup.enter)="buscar()">
-          <button (click)="buscar()"><i class="fas fa-search"></i></button>
-        </div>
-        <div class="user-actions">
-          <a href="#" class="user-link"><i class="fas fa-user"></i> Mi cuenta</a>
-          <a href="#" class="cart-link"><i class="fas fa-shopping-cart"></i> Carrito (0)</a>
-        </div>
+        
+        <!-- Carrito -->
+        <a href="#" class="cart-link"><i class="fas fa-shopping-cart"></i> Carrito (0)</a>
       </div>
     </div>
-    <div class="header-nav">
-  <div class="container">
-    <nav>
-      <ul>
-        <li><a routerLink="/home" routerLinkActive="active">INICIO</a></li>
-        <li><a routerLink="/lubricantes" routerLinkActive="active">LUBRICANTES</a></li>
-        <li class="dropdown">
-          <a href="javascript:void(0)">ACCESORIOS <i class="fas fa-caret-down"></i></a>
-          <div class="dropdown-content">
-            <a routerLink="/accesorios" routerLinkActive="active">ACCESORIOS</a>
-            <a routerLink="/guantes" routerLinkActive="active">GUANTES</a>
-            <a routerLink="/neumaticos" routerLinkActive="active">NEUMÁTICOS</a>
-          </div>
-        </li>
-        <li class="dropdown">
-          <a href="javascript:void(0)">REPUESTOS <i class="fas fa-caret-down"></i></a>
-          <div class="dropdown-content">
-            <a [routerLink]="['/repuestos']" [queryParams]="{tipo: 'frenos'}" routerLinkActive="active">FRENOS</a>
-            <a [routerLink]="['/repuestos']" [queryParams]="{tipo: 'transmision'}" routerLinkActive="active">TRANSMISIÓN</a>
-            <a [routerLink]="['/repuestos']" [queryParams]="{tipo: 'cadena'}" routerLinkActive="active">CADENA</a>
-            <a [routerLink]="['/repuestos']" [queryParams]="{tipo: 'motor'}" routerLinkActive="active">MOTOR</a>
-          </div>
-        </li>
-        <li><a routerLink="/cascos" routerLinkActive="active">CASCOS</a></li>
-        <li><a routerLink="/contacto" routerLinkActive="active">CONTACTO</a></li>
-      </ul>
-    </nav>
   </div>
-</div>
-  </header>
+  
+  <div class="header-nav">
+    <div class="container">
+      <nav>
+        <ul>
+          <li><a routerLink="/home" routerLinkActive="active">INICIO</a></li>
+          <li><a routerLink="/lubricantes" routerLinkActive="active">LUBRICANTES</a></li>
+          <li class="dropdown">
+            <a href="javascript:void(0)">ACCESORIOS <i class="fas fa-caret-down"></i></a>
+            <div class="dropdown-content">
+              <a routerLink="/accesorios" routerLinkActive="active">ACCESORIOS</a>
+              <a routerLink="/guantes" routerLinkActive="active">GUANTES</a>
+              <a routerLink="/neumaticos" routerLinkActive="active">NEUMÁTICOS</a>
+            </div>
+          </li>
+          <li class="dropdown">
+            <a href="javascript:void(0)">REPUESTOS <i class="fas fa-caret-down"></i></a>
+            <div class="dropdown-content">
+              <a [routerLink]="['/repuestos']" [queryParams]="{tipo: 'frenos'}" routerLinkActive="active">FRENOS</a>
+              <a [routerLink]="['/repuestos']" [queryParams]="{tipo: 'transmision'}" routerLinkActive="active">TRANSMISIÓN</a>
+              <a [routerLink]="['/repuestos']" [queryParams]="{tipo: 'cadena'}" routerLinkActive="active">CADENA</a>
+              <a [routerLink]="['/repuestos']" [queryParams]="{tipo: 'motor'}" routerLinkActive="active">MOTOR</a>
+            </div>
+          </li>
+          <li><a routerLink="/cascos" routerLinkActive="active">CASCOS</a></li>
+          <li><a routerLink="/contacto" routerLinkActive="active">CONTACTO</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>

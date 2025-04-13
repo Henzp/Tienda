@@ -36,6 +36,8 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
 import { DefaultLayoutComponent } from './layouts/default-layout/default-layout.component';
 import { UsuariosListaComponent } from './pages/admin/usuarios-lista/usuarios-lista.component';
 import { UsuarioDetalleComponent } from './pages/admin/usuario-detalle/usuario-detalle.component';
+import { CategoriasListaComponent } from './pages/admin/categorias-lista/categorias-lista.component';
+import { CategoriaFormComponent } from './pages/admin/categoria-form/categoria-form.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +66,9 @@ import { UsuarioDetalleComponent } from './pages/admin/usuario-detalle/usuario-d
     AdminLayoutComponent,
     DefaultLayoutComponent,
     UsuariosListaComponent,
-    UsuarioDetalleComponent
+    UsuarioDetalleComponent,
+    CategoriasListaComponent,
+    CategoriaFormComponent
   ],
   imports: [
     BrowserModule,

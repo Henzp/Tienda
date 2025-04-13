@@ -27,6 +27,10 @@ import { ProductosListaComponent } from './pages/admin/productos-lista/productos
 import { ProductoFormComponent } from './pages/admin/producto-form/producto-form.component';
 import { UsuariosListaComponent } from './pages/admin/usuarios-lista/usuarios-lista.component';
 import { UsuarioDetalleComponent } from './pages/admin/usuario-detalle/usuario-detalle.component';
+import { CategoriasListaComponent } from './pages/admin/categorias-lista/categorias-lista.component';
+import { CategoriaFormComponent } from './pages/admin/categoria-form/categoria-form.component'; 
+
+
 
 // Guard para proteger rutas admin
 import { AdminGuard } from './guards/admin.guard';

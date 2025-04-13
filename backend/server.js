@@ -24,11 +24,13 @@ const productosRoutes = require('./routes/productos');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const usuariosRoutes = require('./routes/usuarios');
+const categoriasRoutes = require('./routes/categorias'); // Nueva línea
 
 app.use('/api/admin/usuarios', usuariosRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/admin/categorias', categoriasRoutes); // Nueva línea
 
 // Puerto del servidor
 const PORT = process.env.PORT || 3000;

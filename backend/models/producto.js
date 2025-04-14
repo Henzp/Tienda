@@ -9,6 +9,9 @@ const productoSchema = new mongoose.Schema({
   imagenesAdicionales: [String],
   categoria: { type: String, required: true },
   subcategoria: { type: String },
+  categoriaId: {type: mongoose.Schema.Types.ObjectId,
+    ref: 'Categoria'
+  },
   destacado: { type: Boolean, default: false },
   sku: { type: String },
   marca: { type: String },

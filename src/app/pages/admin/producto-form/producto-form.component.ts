@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
+import { CategoriaService } from 'src/app/services/categoria.service';
 
 @Component({
   selector: 'app-producto-form',
@@ -17,13 +18,14 @@ export class ProductoFormComponent implements OnInit {
   errorMensaje: string = '';
   imagenPreview: string | ArrayBuffer | null = null;
   imagenesPreview: (string | ArrayBuffer)[] = [];
-  categorias: string[] = ['Repuestos', 'Neumaticos', 'Accesorios', 'Otros'];
+  categorias: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private adminService: AdminService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private categoriaService: CategoriaService
   ) {
     this.productoForm = this.fb.group({
       nombre: ['', [Validators.required]],
@@ -41,6 +43,9 @@ export class ProductoFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Carga las categorías al iniciar
+    this.cargarCategorias();
+    
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -50,7 +55,21 @@ export class ProductoFormComponent implements OnInit {
       }
     });
   }
+  
+  // Nuevo método para cargar las categorías
+  cargarCategorias() {
+    this.categoriaService.getCategorias().subscribe({
+      next: (categorias) => {
+        this.categorias = categorias;
+        console.log('Categorías cargadas:', categorias);
+      },
+      error: (error) => {
+        console.error('Error al cargar categorías:', error);
+      }
+    });
+  }
 
+  // El resto del código queda igual
   cargarProducto(id: string) {
     this.cargando = true;
     this.adminService.getProducto(id).subscribe({

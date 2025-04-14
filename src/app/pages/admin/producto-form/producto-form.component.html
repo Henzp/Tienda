@@ -55,9 +55,9 @@
           <div class="form-row">
             <div class="form-group">
               <label for="categoria">Categoría *</label>
-              <select id="categoria" formControlName="categoria" class="form-control">
+              <select formControlName="categoria" class="form-control">
                 <option value="">Seleccionar categoría</option>
-                <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
+                <option *ngFor="let cat of categorias" [value]="cat.nombre">{{ cat.nombre }}</option>
               </select>
               <div class="validation-error" *ngIf="productoForm.get('categoria')?.invalid && productoForm.get('categoria')?.touched">
                 La categoría es obligatoria

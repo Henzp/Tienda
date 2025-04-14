@@ -19,7 +19,7 @@ export class AdminService {
 
   // Obtener un producto por ID
   getProducto(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/productos/${id}`);
+    return this.http.get<any>(`${environment.apiUrl}/productos/${id}`);
   }
 
   // Crear un nuevo producto

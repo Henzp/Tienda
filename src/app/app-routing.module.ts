@@ -74,7 +74,11 @@ const routes: Routes = [
       { path: 'productos/nuevo', component: ProductoFormComponent },
       { path: 'productos/editar/:id', component: ProductoFormComponent },
       { path: 'usuarios', component: UsuariosListaComponent },
-      { path: 'usuarios/editar/:id', component: UsuarioDetalleComponent }
+      { path: 'usuarios/editar/:id', component: UsuarioDetalleComponent },
+      { path: 'categorias', component: CategoriasListaComponent, canActivate: [AdminGuard] },
+      { path: 'categorias/nueva', component: CategoriaFormComponent, canActivate: [AdminGuard] },
+      { path: 'categorias/editar/:id', component: CategoriaFormComponent, canActivate: [AdminGuard] },
+      
     ]
   },
   

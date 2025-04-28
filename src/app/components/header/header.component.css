@@ -194,3 +194,22 @@ nav ul li a:hover, nav ul li a.active {
     min-width: auto;
   }
 }
+.cart-icon {
+  position: relative;
+  margin-left: 20px;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #e74c3c;
+  color: white;
+  font-size: 12px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

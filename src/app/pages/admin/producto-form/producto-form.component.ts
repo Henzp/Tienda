@@ -17,6 +17,7 @@ export class ProductoFormComponent implements OnInit {
   guardando: boolean = false;
   errorMensaje: string = '';
   imagenPreview: string | ArrayBuffer | null = null;
+  // Mantenemos estos arrays solo para visualización en edición
   imagenesPreview: (string | ArrayBuffer)[] = [];
   categorias: any[] = [];
 
@@ -56,7 +57,7 @@ export class ProductoFormComponent implements OnInit {
     });
   }
   
-  // Nuevo método para cargar las categorías
+  // Método para cargar las categorías
   cargarCategorias() {
     this.categoriaService.getCategorias().subscribe({
       next: (categorias) => {
@@ -69,7 +70,6 @@ export class ProductoFormComponent implements OnInit {
     });
   }
 
-  // El resto del código queda igual
   cargarProducto(id: string) {
     this.cargando = true;
     this.adminService.getProducto(id).subscribe({
@@ -92,6 +92,7 @@ export class ProductoFormComponent implements OnInit {
         }
         
         if (producto.imagenesAdicionales && producto.imagenesAdicionales.length > 0) {
+          // Solo almacenamos las URL para mostrarlas
           this.imagenesPreview = producto.imagenesAdicionales;
         }
         
@@ -137,7 +138,7 @@ export class ProductoFormComponent implements OnInit {
       }
     });
     
-    // Añadir la imagen si existe
+    // Añadir solo la imagen principal si existe
     if (formValue.imagen) {
       formData.append('imagen', formValue.imagen);
     }
@@ -153,12 +154,13 @@ export class ProductoFormComponent implements OnInit {
     this.adminService.crearProducto(formData).subscribe({
       next: (respuesta) => {
         this.guardando = false;
+        alert('Producto creado exitosamente.');
         this.router.navigate(['/admin/productos']);
       },
       error: (error) => {
         this.guardando = false;
         console.error('Error al crear el producto:', error);
-        this.errorMensaje = 'No se pudo crear el producto. Inténtelo de nuevo.';
+        this.errorMensaje = error.error?.mensaje || 'No se pudo crear el producto. Inténtelo de nuevo.';
       }
     });
   }
@@ -169,12 +171,13 @@ export class ProductoFormComponent implements OnInit {
     this.adminService.actualizarProducto(this.productoId, formData).subscribe({
       next: (respuesta) => {
         this.guardando = false;
+        alert('Producto actualizado exitosamente.');
         this.router.navigate(['/admin/productos']);
       },
       error: (error) => {
         this.guardando = false;
         console.error('Error al actualizar el producto:', error);
-        this.errorMensaje = 'No se pudo actualizar el producto. Inténtelo de nuevo.';
+        this.errorMensaje = error.error?.mensaje || 'No se pudo actualizar el producto. Inténtelo de nuevo.';
       }
     });
   }

@@ -2,6 +2,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { CarritoService } from '../../services/carrito.service';
 
 @Component({
   selector: 'app-header',
@@ -9,13 +10,15 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  searchTerm: string = ''; // Añadido para el input de búsqueda
+  searchTerm: string = '';
   dropdownVisible = false;
   nombreUsuario: string = '';
+  totalItems: number = 0;
 
   constructor(
     public authService: AuthService,
-    private router: Router
+    private router: Router,
+    private carritoService: CarritoService
   ) {}
 
   ngOnInit() {
@@ -23,13 +26,16 @@ export class HeaderComponent implements OnInit {
       if (usuario) {
         this.nombreUsuario = usuario.nombre;
       }
+    }); // Faltaba este paréntesis de cierre
+    
+    // Esta suscripción debe estar fuera de la suscripción anterior
+    this.carritoService.getTotalItems().subscribe(total => {
+      this.totalItems = total;
     });
   }
 
-  // Método para manejar la búsqueda
   buscar() {
     if (this.searchTerm && this.searchTerm.trim() !== '') {
-      // Puedes implementar la navegación a los resultados de búsqueda
       this.router.navigate(['/productos'], { 
         queryParams: { busqueda: this.searchTerm.trim() } 
       });

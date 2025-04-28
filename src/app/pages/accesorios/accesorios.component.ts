@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductoService } from '../../services/producto.service';
-import { Producto } from '../../models/producto';
 
 @Component({
   selector: 'app-accesorios',
@@ -9,10 +8,12 @@ import { Producto } from '../../models/producto';
   styleUrls: ['./accesorios.component.css']
 })
 export class AccesoriosComponent implements OnInit {
-  accesorios: Producto[] = [];
-  accesoriosFiltrados: Producto[] = [];
+  accesorios: any[] = [];
+  accesoriosFiltrados: any[] = [];
   marcas: string[] = [];
   marcaSeleccionada: string = 'todas';
+  cargando: boolean = true;
+  error: string = '';
 
   constructor(
     private productoService: ProductoService,
@@ -20,15 +21,29 @@ export class AccesoriosComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Usar el nuevo método getProductosPorCategoria
-    this.productoService.getProductosPorCategoria('Accesorios').subscribe(productos => {
-      this.accesorios = productos;
-      this.accesoriosFiltrados = productos;
-      
-      // Obtener marcas únicas
-      this.marcas = [...new Set(productos
-        .filter(p => p.marca)
-        .map(p => p.marca as string))];
+    // Cargamos todos los productos y filtramos por categoría
+    this.productoService.getProductos().subscribe({
+      next: (productos) => {
+        // Filtramos manualmente por categoría
+        this.accesorios = productos.filter(p => 
+          p.categoria && p.categoria.toLowerCase() === 'accesorios'.toLowerCase()
+        );
+        this.accesoriosFiltrados = [...this.accesorios];
+        
+        // Extraer marcas únicas
+        const marcasSet = new Set<string>();
+        this.accesorios.forEach(p => {
+          if (p.marca) marcasSet.add(p.marca);
+        });
+        this.marcas = Array.from(marcasSet);
+        
+        this.cargando = false;
+      },
+      error: (error) => {
+        console.error('ERROR', error);
+        this.error = 'No se pudieron cargar los productos.';
+        this.cargando = false;
+      }
     });
   }
 
@@ -42,7 +57,7 @@ export class AccesoriosComponent implements OnInit {
     }
   }
 
-  verDetalles(id: number | string | undefined): void {
+  verDetalles(id: any): void {
     if (id) {
       this.router.navigate(['/producto', id]);
     }

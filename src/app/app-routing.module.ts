@@ -19,6 +19,8 @@ import { DetalleProductoComponent } from './pages/detalle-producto/detalle-produ
 import { DiagnosticoComponent } from './diagnostico/diagnostico.component';
 import { SelectorPerfilComponent } from './pages/selector-perfil/selector-perfil.component';
 import { RegistroComponent } from './pages/registro/registro.component';
+import { CarritoComponent } from './pages/carrito/carrito.component';
+import { CarritoService } from './services/carrito.service';  
 
 // Componentes Admin
 import { LoginComponent } from './pages/admin/login/login.component';
@@ -29,7 +31,7 @@ import { UsuariosListaComponent } from './pages/admin/usuarios-lista/usuarios-li
 import { UsuarioDetalleComponent } from './pages/admin/usuario-detalle/usuario-detalle.component';
 import { CategoriasListaComponent } from './pages/admin/categorias-lista/categorias-lista.component';
 import { CategoriaFormComponent } from './pages/admin/categoria-form/categoria-form.component'; 
-
+import { CheckoutComponent } from './pages/checkout/checkout.component';
 
 
 // Guard para proteger rutas admin
@@ -58,6 +60,8 @@ const routes: Routes = [
       { path: 'producto/:id', component: DetalleProductoComponent },
       { path: 'diagnostico', component: DiagnosticoComponent },
       { path: 'perfiles', component: SelectorPerfilComponent },
+      { path: 'carrito', component: CarritoComponent },
+      { path: 'checkout', component: CheckoutComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },

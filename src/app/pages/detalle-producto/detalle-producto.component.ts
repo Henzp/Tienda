@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductoService } from '../../services/producto.service';
 import { Producto } from '../../models/producto';
+import { CarritoService } from '../../services/carrito.service';
 
 @Component({
   selector: 'app-detalle-producto',
@@ -17,6 +18,7 @@ export class DetalleProductoComponent implements OnInit {
   loading: boolean = true;
   error: boolean = false;
   cantidad: number = 1;
+  cantidadSeleccionada: number = 1;
   categoriaUrl: string = '';
   zoomPosition: string = 'center';
   
@@ -42,7 +44,8 @@ export class DetalleProductoComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private productoService: ProductoService
+    private productoService: ProductoService,
+    private carritoService: CarritoService
   ) { }
   
   ngOnInit(): void {
@@ -105,6 +108,9 @@ export class DetalleProductoComponent implements OnInit {
           // Establecer la imagen principal
           this.imagenActual = this.imagenes[0];
           this.imagenIndex = 0;
+          
+          // Resetear la cantidad seleccionada
+          this.cantidadSeleccionada = 1;
           
           // Cargar productos relacionados
           this.cargarProductosRelacionados(producto.categoria);
@@ -191,5 +197,36 @@ export class DetalleProductoComponent implements OnInit {
     return texto
       .replace(/• /g, '<br>• ')
       .replace(/\n/g, '<br>'); // Reemplaza saltos de línea por <br>
+  }
+
+  agregarAlCarrito(): void {
+    if (this.producto) {
+      const resultado = this.carritoService.agregarItem(this.producto, this.cantidadSeleccionada);
+      
+      if (resultado.exito) {
+        alert(resultado.mensaje);
+      } else {
+        alert(resultado.mensaje);
+      }
+    }
+  }
+  
+  incrementarCantidad(): void {
+    if (this.producto && this.producto.stock !== undefined && this.cantidadSeleccionada < this.producto.stock) {
+      this.cantidadSeleccionada++;
+    }
+  }
+
+  decrementarCantidad(): void {
+    if (this.cantidadSeleccionada > 1) {
+      this.cantidadSeleccionada--;
+    }
+  }
+  get productoStock(): number {
+    return this.producto?.stock ?? 0;
+  }
+  
+  get hayStock(): boolean {
+    return this.productoStock > 0;
   }
 }

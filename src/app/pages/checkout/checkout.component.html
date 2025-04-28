@@ -1,0 +1,361 @@
+<div class="checkout-container">
+    <div class="checkout-header">
+      <h1>Finalizar compra</h1>
+      <div class="steps">
+        <div class="step" [class.active]="pasoActual >= 1">
+          <div class="step-number">1</div>
+          <div class="step-text">Envío</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" [class.active]="pasoActual >= 2">
+          <div class="step-number">2</div>
+          <div class="step-text">Envío</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" [class.active]="pasoActual >= 3">
+          <div class="step-number">3</div>
+          <div class="step-text">Pago</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" [class.active]="pasoActual >= 4">
+          <div class="step-number">4</div>
+          <div class="step-text">Resumen</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="error-message" *ngIf="errorMensaje">
+      <i class="fas fa-exclamation-circle"></i> {{ errorMensaje }}
+    </div>
+    
+    <!-- Pedido completado -->
+    <div class="order-success" *ngIf="pedidoCompletado">
+      <div class="success-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h2>¡Pedido completado con éxito!</h2>
+      <p>Gracias por tu compra. Tu número de pedido es: <strong>{{ numeroPedido }}</strong></p>
+      <p>Hemos enviado un correo con los detalles de la compra.</p>
+      <div class="success-actions">
+        <button class="btn-secundario" (click)="irAMisPedidos()">Ver mis pedidos</button>
+        <button class="btn-primario" (click)="continuarComprando()">Seguir comprando</button>
+      </div>
+    </div>
+    
+    <!-- Proceso de checkout -->
+    <div class="checkout-content" *ngIf="!pedidoCompletado">
+      <div class="checkout-main">
+        <!-- Paso 1: Datos de envío -->
+        <div class="checkout-section" *ngIf="pasoActual === 1">
+          <h2>Datos de envío</h2>
+          <form [formGroup]="datosEnvioForm" class="form-grid">
+            <div class="form-group">
+              <label for="nombre">Nombre *</label>
+              <input type="text" id="nombre" formControlName="nombre" class="form-control">
+              <div class="validation-error" *ngIf="datosEnvioForm.get('nombre')?.invalid && datosEnvioForm.get('nombre')?.touched">
+                El nombre es obligatorio
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="apellido">Apellido *</label>
+              <input type="text" id="apellido" formControlName="apellido" class="form-control">
+              <div class="validation-error" *ngIf="datosEnvioForm.get('apellido')?.invalid && datosEnvioForm.get('apellido')?.touched">
+                El apellido es obligatorio
+              </div>
+            </div>
+            
+            <div class="form-group span-2">
+              <label for="email">Email *</label>
+              <input type="email" id="email" formControlName="email" class="form-control">
+              <div class="validation-error" *ngIf="datosEnvioForm.get('email')?.invalid && datosEnvioForm.get('email')?.touched">
+                Ingrese un email válido
+              </div>
+            </div>
+            
+            <div class="form-group span-2">
+              <label for="telefono">Teléfono *</label>
+              <input type="tel" id="telefono" formControlName="telefono" class="form-control">
+              <div class="validation-error" *ngIf="datosEnvioForm.get('telefono')?.invalid && datosEnvioForm.get('telefono')?.touched">
+                El teléfono es obligatorio
+              </div>
+            </div>
+            
+            <div class="form-group span-2">
+              <label for="direccion">Dirección *</label>
+              <input type="text" id="direccion" formControlName="direccion" class="form-control">
+              <div class="validation-error" *ngIf="datosEnvioForm.get('direccion')?.invalid && datosEnvioForm.get('direccion')?.touched">
+                La dirección es obligatoria
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="ciudad">Ciudad *</label>
+              <input type="text" id="ciudad" formControlName="ciudad" class="form-control">
+              <div class="validation-error" *ngIf="datosEnvioForm.get('ciudad')?.invalid && datosEnvioForm.get('ciudad')?.touched">
+                La ciudad es obligatoria
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="codigoPostal">Código postal *</label>
+              <input type="text" id="codigoPostal" formControlName="codigoPostal" class="form-control">
+              <div class="validation-error" *ngIf="datosEnvioForm.get('codigoPostal')?.invalid && datosEnvioForm.get('codigoPostal')?.touched">
+                El código postal es obligatorio
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="provincia">Provincia</label>
+              <input type="text" id="provincia" formControlName="provincia" class="form-control">
+            </div>
+            
+            <div class="form-group">
+              <label for="pais">País</label>
+              <input type="text" id="pais" formControlName="pais" class="form-control">
+            </div>
+            
+            <div class="form-group span-2">
+              <label for="instrucciones">Instrucciones de entrega (opcional)</label>
+              <textarea id="instrucciones" formControlName="instrucciones" class="form-control" rows="3"></textarea>
+            </div>
+          </form>
+          
+          <div class="section-actions">
+            <button class="btn-secundario" (click)="volverAlCarrito()">
+              <i class="fas fa-arrow-left"></i> Volver al carrito
+            </button>
+            <button class="btn-primario" (click)="irAlPaso(2)" [disabled]="datosEnvioForm.invalid">
+              Continuar <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Paso 2: Método de envío -->
+        <div class="checkout-section" *ngIf="pasoActual === 2">
+          <h2>Método de envío</h2>
+          <form [formGroup]="metodoEnvioForm" class="shipping-options">
+            <div class="option-card" [class.selected]="metodoEnvioSeleccionado === 'estandar'">
+              <div class="option-radio">
+                <input type="radio" id="envio-estandar" formControlName="tipo" value="estandar">
+                <label for="envio-estandar"></label>
+              </div>
+              <div class="option-content">
+                <h3>Envío estándar</h3>
+                <p>Entrega en 3-5 días hábiles</p>
+                <p class="option-price">
+                  <span *ngIf="subtotal > 50000">Gratis</span>
+                  <span *ngIf="subtotal <= 50000">$3.000</span>
+                </p>
+              </div>
+            </div>
+            
+            <div class="option-card" [class.selected]="metodoEnvioSeleccionado === 'express'">
+              <div class="option-radio">
+                <input type="radio" id="envio-express" formControlName="tipo" value="express">
+                <label for="envio-express"></label>
+              </div>
+              <div class="option-content">
+                <h3>Envío express</h3>
+                <p>Entrega garantizada en 1-2 días hábiles</p>
+                <p class="option-price">
+                  <span>${{ calcularCostoEnvioExpress() | number }}</span>
+                </p>
+              </div>
+            </div>
+          </form>
+          
+          <div class="section-actions">
+            <button class="btn-secundario" (click)="irAlPaso(1)">
+              <i class="fas fa-arrow-left"></i> Volver
+            </button>
+            <button class="btn-primario" (click)="irAlPaso(3)">
+              Continuar <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Paso 3: Método de pago -->
+        <div class="checkout-section" *ngIf="pasoActual === 3">
+          <h2>Método de pago</h2>
+          <form [formGroup]="metodoPagoForm" class="payment-options">
+            <div class="option-card" [class.selected]="metodoPagoSeleccionado === 'tarjeta'">
+              <div class="option-radio">
+                <input type="radio" id="pago-tarjeta" formControlName="tipo" value="tarjeta">
+                <label for="pago-tarjeta"></label>
+              </div>
+              <div class="option-content">
+                <h3>Tarjeta de crédito/débito</h3>
+                <div class="card-icons">
+                  <i class="fab fa-cc-visa"></i>
+                  <i class="fab fa-cc-mastercard"></i>
+                  <i class="fab fa-cc-amex"></i>
+                </div>
+              </div>
+            </div>
+            
+            <div class="option-card" [class.selected]="metodoPagoSeleccionado === 'transferencia'">
+              <div class="option-radio">
+                <input type="radio" id="pago-transferencia" formControlName="tipo" value="transferencia">
+                <label for="pago-transferencia"></label>
+              </div>
+              <div class="option-content">
+                <h3>Transferencia bancaria</h3>
+                <p>Te enviaremos los datos para realizar la transferencia</p>
+              </div>
+            </div>
+            
+            <div class="option-card" [class.selected]="metodoPagoSeleccionado === 'contrarembolso'">
+              <div class="option-radio">
+                <input type="radio" id="pago-contrarembolso" formControlName="tipo" value="contrarembolso">
+                <label for="pago-contrarembolso"></label>
+              </div>
+              <div class="option-content">
+                <h3>Pago contra entrega</h3>
+                <p>Paga en efectivo al recibir tu pedido</p>
+              </div>
+            </div>
+            
+            <!-- Campos de tarjeta de crédito (mostrar solo si se selecciona tarjeta) -->
+            <div class="credit-card-fields" *ngIf="metodoPagoSeleccionado === 'tarjeta'">
+              <div class="form-group span-2">
+                <label for="nombreTarjeta">Nombre en la tarjeta *</label>
+                <input type="text" id="nombreTarjeta" formControlName="nombreTarjeta" class="form-control">
+                <div class="validation-error" *ngIf="metodoPagoForm.get('nombreTarjeta')?.invalid && metodoPagoForm.get('nombreTarjeta')?.touched">
+                  El nombre es obligatorio
+                </div>
+              </div>
+              
+              <div class="form-group span-2">
+                <label for="numeroTarjeta">Número de tarjeta *</label>
+                <input type="text" id="numeroTarjeta" formControlName="numeroTarjeta" class="form-control"
+                       placeholder="1234 5678 9012 3456">
+                <div class="validation-error" *ngIf="metodoPagoForm.get('numeroTarjeta')?.invalid && metodoPagoForm.get('numeroTarjeta')?.touched">
+                  Ingrese un número de tarjeta válido
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="fechaVencimiento">Fecha de vencimiento *</label>
+                <input type="text" id="fechaVencimiento" formControlName="fechaVencimiento" class="form-control"
+                       placeholder="MM/YY">
+                <div class="validation-error" *ngIf="metodoPagoForm.get('fechaVencimiento')?.invalid && metodoPagoForm.get('fechaVencimiento')?.touched">
+                  Formato incorrecto (MM/YY)
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="cvv">CVV *</label>
+                <input type="text" id="cvv" formControlName="cvv" class="form-control"
+                       placeholder="123">
+                <div class="validation-error" *ngIf="metodoPagoForm.get('cvv')?.invalid && metodoPagoForm.get('cvv')?.touched">
+                  CVV inválido
+                </div>
+              </div>
+            </div>
+          </form>
+          
+          <div class="section-actions">
+            <button class="btn-secundario" (click)="irAlPaso(2)">
+              <i class="fas fa-arrow-left"></i> Volver
+            </button>
+            <button class="btn-primario" (click)="irAlPaso(4)" [disabled]="metodoPagoForm.invalid">
+              Continuar <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Paso 4: Resumen del pedido -->
+        <div class="checkout-section" *ngIf="pasoActual === 4">
+          <h2>Resumen del pedido</h2>
+          
+          <div class="order-summary">
+            <div class="order-items">
+              <h3>Productos</h3>
+              <div class="item" *ngFor="let item of items">
+                <div class="item-image">
+                  <img [src]="item.imagenUrl" [alt]="item.nombre">
+                </div>
+                <div class="item-details">
+                  <h4>{{ item.nombre }}</h4>
+                  <p class="item-price">${{ item.precio | number }} x {{ item.cantidad }}</p>
+                </div>
+                <div class="item-total">
+                  ${{ item.precio * item.cantidad | number }}
+                </div>
+              </div>
+            </div>
+            
+            <div class="order-info">
+              <h3>Envío</h3>
+              <div class="info-section">
+                <h4>Datos de envío</h4>
+                <p>{{ datosEnvioForm.value.nombre }} {{ datosEnvioForm.value.apellido }}</p>
+                <p>{{ datosEnvioForm.value.direccion }}</p>
+                <p>{{ datosEnvioForm.value.ciudad }}, {{ datosEnvioForm.value.provincia }} {{ datosEnvioForm.value.codigoPostal }}</p>
+                <p>{{ datosEnvioForm.value.pais }}</p>
+                <p>{{ datosEnvioForm.value.telefono }}</p>
+                <p>{{ datosEnvioForm.value.email }}</p>
+              </div>
+              
+              <div class="info-section">
+                <h4>Método de envío</h4>
+                <p>{{ metodoEnvioSeleccionado === 'estandar' ? 'Envío estándar (3-5 días)' : 'Envío express (1-2 días)' }}</p>
+              </div>
+              
+              <div class="info-section">
+                <h4>Método de pago</h4>
+                <p *ngIf="metodoPagoSeleccionado === 'tarjeta'">
+                  Tarjeta de crédito/débito ****{{ metodoPagoForm.value.numeroTarjeta?.substr(-4) }}
+                </p>
+                <p *ngIf="metodoPagoSeleccionado === 'transferencia'">Transferencia bancaria</p>
+                <p *ngIf="metodoPagoSeleccionado === 'contrarembolso'">Pago contra entrega</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="section-actions">
+            <button class="btn-secundario" (click)="irAlPaso(3)">
+              <i class="fas fa-arrow-left"></i> Volver
+            </button>
+            <button class="btn-primario" (click)="finalizarCompra()" [disabled]="enviandoPedido">
+              {{ enviandoPedido ? 'Procesando...' : 'Finalizar compra' }}
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Resumen lateral -->
+      <div class="checkout-sidebar">
+        <div class="cart-summary">
+          <h3>Resumen de la compra</h3>
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>${{ subtotal | number }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Envío</span>
+            <span>${{ costoEnvio | number }}</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span>
+            <span>${{ total | number }}</span>
+          </div>
+          
+          <div class="cart-items-preview">
+            <h4>{{ items.length }} producto{{ items.length !== 1 ? 's' : '' }}</h4>
+            <div class="preview-item" *ngFor="let item of items">
+              <div class="preview-image">
+                <img [src]="item.imagenUrl" [alt]="item.nombre">
+                <span class="preview-quantity">{{ item.cantidad }}</span>
+              </div>
+              <div class="preview-details">
+                <p class="preview-name">{{ item.nombre }}</p>
+                <p class="preview-price">${{ item.precio | number }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

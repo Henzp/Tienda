@@ -1,0 +1,61 @@
+<div class="carrito-container">
+    <h1>Tu Carrito de Compras</h1>
+    
+    <div class="empty-cart" *ngIf="items.length === 0">
+      <i class="fas fa-shopping-cart"></i>
+      <p>Tu carrito está vacío</p>
+      <button class="btn-continuar" (click)="continuarComprando()">Continuar comprando</button>
+    </div>
+    
+    <div class="cart-content" *ngIf="items.length > 0">
+      <div class="cart-items">
+        <div class="cart-header">
+          <div class="col-producto">Producto</div>
+          <div class="col-precio">Precio</div>
+          <div class="col-cantidad">Cantidad</div>
+          <div class="col-total">Total</div>
+          <div class="col-acciones"></div>
+        </div>
+        
+        <div class="cart-item" *ngFor="let item of items">
+          <div class="col-producto">
+            <img [src]="item.imagenUrl" [alt]="item.nombre">
+            <div class="item-details">
+              <h3>{{ item.nombre }}</h3>
+            </div>
+          </div>
+          
+          <div class="col-precio">${{ item.precio | number }}</div>
+          
+          <div class="col-cantidad">
+            <div class="quantity-control">
+              <button (click)="actualizarCantidad(item.productoId, item.cantidad - 1)">-</button>
+              <span>{{ item.cantidad }}</span>
+              <button (click)="actualizarCantidad(item.productoId, item.cantidad + 1)">+</button>
+            </div>
+          </div>
+          
+          <div class="col-total">${{ item.precio * item.cantidad | number }}</div>
+          
+          <div class="col-acciones">
+            <button class="btn-eliminar" (click)="eliminarItem(item.productoId)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="cart-summary">
+        <div class="summary-row">
+          <span>Subtotal:</span>
+          <span>${{ subtotal | number }}</span>
+        </div>
+        
+        <div class="cart-actions">
+          <button class="btn-vaciar" (click)="vaciarCarrito()">Vaciar carrito</button>
+          <button class="btn-continuar" (click)="continuarComprando()">Continuar comprando</button>
+          <button class="btn-procesar" (click)="procesarCompra()">Procesar compra</button>
+        </div>
+      </div>
+    </div>
+  </div>

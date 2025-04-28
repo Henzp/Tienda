@@ -38,6 +38,8 @@ import { UsuariosListaComponent } from './pages/admin/usuarios-lista/usuarios-li
 import { UsuarioDetalleComponent } from './pages/admin/usuario-detalle/usuario-detalle.component';
 import { CategoriasListaComponent } from './pages/admin/categorias-lista/categorias-lista.component';
 import { CategoriaFormComponent } from './pages/admin/categoria-form/categoria-form.component';
+import { CarritoComponent } from './pages/carrito/carrito.component';
+import { CheckoutComponent } from './pages/checkout/checkout.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +70,9 @@ import { CategoriaFormComponent } from './pages/admin/categoria-form/categoria-f
     UsuariosListaComponent,
     UsuarioDetalleComponent,
     CategoriasListaComponent,
-    CategoriaFormComponent
+    CategoriaFormComponent,
+    CarritoComponent,
+    CheckoutComponent
   ],
   imports: [
     BrowserModule,

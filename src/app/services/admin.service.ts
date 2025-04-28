@@ -7,40 +7,46 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class AdminService {
-  // Cambiar de private a public
+  // URL base para endpoints de administración
   public apiUrl = environment.apiUrl + '/admin';
+  // URL base para endpoints de productos
+  private productosUrl = environment.apiUrl + '/productos';
 
   constructor(private http: HttpClient) { }
 
+  // PRODUCTOS
+
   // Obtener todos los productos
   getProductos(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/productos`);
+    return this.http.get<any[]>(`${this.productosUrl}`);
   }
 
   // Obtener un producto por ID
   getProducto(id: string): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}/productos/${id}`);
+    return this.http.get<any>(`${this.productosUrl}/${id}`);
   }
 
   // Crear un nuevo producto
   crearProducto(productoData: FormData): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/productos`, productoData);
+    return this.http.post<any>(`${this.productosUrl}`, productoData);
   }
 
   // Actualizar un producto existente
   actualizarProducto(id: string, productoData: FormData): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/productos/${id}`, productoData);
+    return this.http.put<any>(`${this.productosUrl}/${id}`, productoData);
   }
 
   // Eliminar un producto
   eliminarProducto(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/productos/${id}`);
+    return this.http.delete<any>(`${this.productosUrl}/${id}`);
   }
 
   // Subir imágenes adicionales
   subirImagenesAdicionales(id: string, imagenesData: FormData): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/productos/${id}/imagenes`, imagenesData);
+    return this.http.post<any>(`${this.productosUrl}/${id}/imagenes`, imagenesData);
   }
+
+  // USUARIOS
 
   // Obtener todos los usuarios
   getUsuarios(): Observable<any[]> {

@@ -41,7 +41,10 @@
         </div>
         
         <!-- Carrito -->
-        <a href="#" class="cart-link"><i class="fas fa-shopping-cart"></i> Carrito (0)</a>
+        <a routerLink="/carrito" class="cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-badge" *ngIf="totalItems > 0">{{ totalItems }}</span>
+        </a>
       </div>
     </div>
   </div>

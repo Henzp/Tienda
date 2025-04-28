@@ -79,4 +79,9 @@ export class AuthService {
   obtenerPerfil(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/perfil`);
   }
+  isLoggedIn(): boolean {
+    // Verifica si hay un token almacenado o si hay un usuario en el BehaviorSubject
+    const token = localStorage.getItem('token'); // O donde almacenes el token
+    return !!token; // Devuelve true si existe el token
+  }
 }

@@ -25,15 +25,37 @@ const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const usuariosRoutes = require('./routes/usuarios');
 const categoriasRoutes = require('./routes/categorias'); // Nueva línea
+const pedidosRoutes = require('./routes/pedidos'); // Nueva línea
 
 app.use('/api/admin/usuarios', usuariosRoutes);
 app.use('/api/productos', productosRoutes);
+app.use('/api/admin/productos', productosRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin/categorias', categoriasRoutes); // Nueva línea
+app.use('/api/pedidos', pedidosRoutes); // Nueva línea
+
+// Añadir una ruta específica para categorías (esto es temporal para diagnosticar)
+app.get('/api/productos/categoria/:categoria', async (req, res) => {
+    try {
+      console.log(`[RUTA DIRECTA] Buscando productos con categoría: "${req.params.categoria}"`);
+      
+      const Producto = require('./models/producto');
+      const productos = await Producto.find({
+        categoria: req.params.categoria
+      });
+      
+      console.log(`[RUTA DIRECTA] Se encontraron ${productos.length} productos`);
+      res.json(productos);
+    } catch (error) {
+      console.error('[RUTA DIRECTA] Error:', error);
+      res.status(500).json({ mensaje: error.message });
+    }
+});
 
 // Puerto del servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
+// Añadir una ruta específica para subcategorías

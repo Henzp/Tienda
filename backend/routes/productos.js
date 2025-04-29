@@ -147,5 +147,116 @@ router.get('/:id', async (req, res) => {
 
 // RUTAS POST, PUT, DELETE (tu código existente)
 // ...
+// Añade esto después de tus rutas GET existentes, antes de module.exports = router;
 
+// RUTA POST - Crear un nuevo producto
+router.post('/', upload.single('imagen'), async (req, res) => {
+  try {
+    console.log('Intentando crear un nuevo producto...');
+    console.log('Datos recibidos:', req.body);
+    
+    let imagenUrl = '';
+    if (req.file) {
+      // Construir la URL relativa de la imagen
+      imagenUrl = `/assets/productos/${req.file.filename}`;
+      console.log('Imagen guardada:', imagenUrl);
+    }
+    
+    const productoData = {
+      ...req.body,
+      imagenUrl: imagenUrl,
+      precio: Number(req.body.precio),
+      stock: Number(req.body.stock),
+      destacado: req.body.destacado === 'true'
+    };
+    
+    const nuevoProducto = new Producto(productoData);
+    await nuevoProducto.save();
+    
+    console.log('Producto creado exitosamente:', nuevoProducto._id);
+    res.status(201).json({
+      mensaje: 'Producto creado exitosamente',
+      producto: nuevoProducto
+    });
+  } catch (error) {
+    console.error('Error al crear el producto:', error);
+    res.status(500).json({ 
+      mensaje: 'Error al crear el producto', 
+      error: error.toString() 
+    });
+  }
+});
+
+// RUTA PUT - Actualizar un producto existente
+router.put('/:id', upload.single('imagen'), async (req, res) => {
+  try {
+    console.log(`Intentando actualizar el producto con ID: ${req.params.id}`);
+    console.log('Datos recibidos:', req.body);
+    
+    // Buscar el producto existente
+    const productoExistente = await Producto.findById(req.params.id);
+    if (!productoExistente) {
+      console.log(`Producto con ID ${req.params.id} no encontrado`);
+      return res.status(404).json({ mensaje: 'Producto no encontrado' });
+    }
+    
+    // Preparar datos para actualizar
+    const productoData = { ...req.body };
+    
+    // Convertir tipos
+    if (productoData.precio) productoData.precio = Number(productoData.precio);
+    if (productoData.stock) productoData.stock = Number(productoData.stock);
+    if (productoData.destacado !== undefined) {
+      productoData.destacado = productoData.destacado === 'true' || productoData.destacado === true;
+    }
+    
+    // Actualizar imagen solo si se envió una nueva
+    if (req.file) {
+      // Construir la URL relativa de la imagen
+      productoData.imagenUrl = `/assets/productos/${req.file.filename}`;
+      console.log('Nueva imagen guardada:', productoData.imagenUrl);
+    }
+    
+    // Actualizar el producto
+    const productoActualizado = await Producto.findByIdAndUpdate(
+      req.params.id,
+      productoData,
+      { new: true } // Devolver el documento actualizado
+    );
+    
+    console.log('Producto actualizado exitosamente');
+    res.json({
+      mensaje: 'Producto actualizado exitosamente',
+      producto: productoActualizado
+    });
+  } catch (error) {
+    console.error('Error al actualizar el producto:', error);
+    res.status(500).json({ 
+      mensaje: 'Error al actualizar el producto', 
+      error: error.toString() 
+    });
+  }
+});
+
+// RUTA DELETE - Eliminar un producto
+router.delete('/:id', async (req, res) => {
+  try {
+    console.log(`Intentando eliminar el producto con ID: ${req.params.id}`);
+    
+    const resultado = await Producto.findByIdAndDelete(req.params.id);
+    if (!resultado) {
+      console.log(`Producto con ID ${req.params.id} no encontrado`);
+      return res.status(404).json({ mensaje: 'Producto no encontrado' });
+    }
+    
+    console.log('Producto eliminado exitosamente');
+    res.json({ mensaje: 'Producto eliminado exitosamente' });
+  } catch (error) {
+    console.error('Error al eliminar el producto:', error);
+    res.status(500).json({ 
+      mensaje: 'Error al eliminar el producto', 
+      error: error.toString() 
+    });
+  }
+});
 module.exports = router;

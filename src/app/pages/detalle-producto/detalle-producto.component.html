@@ -75,11 +75,18 @@
         </div>
 
     <!-- CONTROL DE CANTIDAD -->
-        <div class="quantity-control" *ngIf="hayStock">
-          <button class="btn-quantity" (click)="decrementarCantidad()" [disabled]="cantidadSeleccionada <= 1">-</button>
-           <input type="number" [(ngModel)]="cantidadSeleccionada" min="1" [max]="productoStock" class="quantity-input">
-           <button class="btn-quantity" (click)="incrementarCantidad()" [disabled]="cantidadSeleccionada >= productoStock">+</button>
-          </div>
+    <div class="quantity-control" *ngIf="hayStock">
+      <div class="quantity-label">Cantidad:</div>
+      <div class="quantity-selector">
+        <button class="btn-quantity decrease" (click)="decrementarCantidad()" [disabled]="cantidadSeleccionada <= 1">
+          <i class="fas fa-minus"></i>
+        </button>
+        <input type="number" [(ngModel)]="cantidadSeleccionada" min="1" [max]="productoStock" class="quantity-input" readonly>
+        <button class="btn-quantity increase" (click)="incrementarCantidad()" [disabled]="cantidadSeleccionada >= productoStock">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+    </div>
 
 <!-- BOTÓN AGREGAR AL CARRITO -->
         <button class="btn-agregar-carrito" (click)="agregarAlCarrito()" [disabled]="!hayStock">

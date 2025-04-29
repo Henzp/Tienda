@@ -22,15 +22,16 @@
         <button (click)="limpiarBusqueda()">Ver todos los productos</button>
     </div>
     
-    <!-- Grid de productos -->
-   <div class="productos-grid">
+<!-- Grid de productos mejorado -->
+<div class="productos-grid">
     <div class="producto-card" *ngFor="let producto of productosFiltrados">
-        <img [src]="producto.imagenUrl" [alt]="producto.nombre">
+      <img [src]="producto.imagenUrl" [alt]="producto.nombre">
+      <div class="producto-info">
         <h3>{{ producto.nombre }}</h3>
         <p class="descripcion">{{ producto.descripcion }}</p>
         <p class="sku" *ngIf="producto.sku">SKU: {{ producto.sku }}</p>
         <p class="precio">${{ producto.precio | number }}</p>
-        <button (click)="verDetalles(producto.id)">Ver Detalles</button>
-    </div>
+      </div>
+      <button (click)="verDetalles(producto.id)">Ver Detalles</button>
 </div>
 </div>

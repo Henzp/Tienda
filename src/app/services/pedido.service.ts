@@ -1,39 +1,88 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PedidoService {
-  private apiUrl = environment.apiUrl + '/pedidos';
+  private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) { }
 
-  // Crear un nuevo pedido
-  crearPedido(pedidoData: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, pedidoData);
-  }
-
-  // Obtener todos los pedidos del usuario
-  getMisPedidos(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/mis-pedidos`);
-  }
-
-  // Obtener un pedido específico
-  getPedido(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/mis-pedidos/${id}`);
-  }
-
-  // Calcular costo de envío según método y total
-  calcularCostoEnvio(metodo: string, subtotal: number): number {
-    if (metodo === 'express') {
-      // Envío express: $5000 o 5% del subtotal (el que sea mayor)
-      return Math.max(5000, subtotal * 0.05);
-    } else {
-      // Envío estándar: Gratis para compras mayores a $50000, de lo contrario $3000
-      return subtotal > 50000 ? 0 : 3000;
+  /**
+   * Verifica el token antes de hacer la petición
+   * @returns HttpHeaders con el token si existe
+   */
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.authService.obtenerToken();
+    if (!token) {
+      console.warn('No hay token disponible para realizar la petición');
+      return new HttpHeaders();
     }
+    
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
+  /**
+   * Crea un nuevo pedido
+   * @param pedidoData Datos del pedido
+   */
+  crearPedido(pedidoData: any): Observable<any> {
+    // Verificar si hay token disponible
+    if (!this.authService.estaLogueado()) {
+      console.error('No hay sesión activa para crear el pedido');
+      return throwError(() => new Error('No hay sesión activa. Por favor, inicia sesión e intenta nuevamente.'));
+    }
+    
+    const headers = this.getAuthHeaders();
+    
+    return this.http.post<any>(`${this.apiUrl}/pedidos`, pedidoData, { headers }).pipe(
+      tap(response => console.log('Pedido creado:', response)),
+      catchError(error => {
+        console.error('Error al crear pedido:', error);
+        if (error.status === 401) {
+          this.authService.logout();
+        }
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Obtiene los pedidos del usuario actual
+   */
+  getPedidosPorUsuario(): Observable<any[]> {
+    const headers = this.getAuthHeaders();
+    
+    return this.http.get<any[]>(`${this.apiUrl}/pedidos/usuario`, { headers }).pipe(
+      catchError(error => {
+        console.error('Error al obtener pedidos del usuario:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Obtiene un pedido específico por su ID
+   * @param id ID del pedido
+   */
+  getPedido(id: string): Observable<any> {
+    const headers = this.getAuthHeaders();
+    
+    return this.http.get<any>(`${this.apiUrl}/pedidos/${id}`, { headers }).pipe(
+      catchError(error => {
+        console.error('Error al obtener pedido:', error);
+        return throwError(() => error);
+      })
+    );
   }
 }

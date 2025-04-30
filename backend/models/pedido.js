@@ -1,3 +1,4 @@
+// models/pedido.js
 const mongoose = require('mongoose');
 
 const pedidoSchema = new mongoose.Schema({

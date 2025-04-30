@@ -40,6 +40,10 @@ import { CategoriasListaComponent } from './pages/admin/categorias-lista/categor
 import { CategoriaFormComponent } from './pages/admin/categoria-form/categoria-form.component';
 import { CarritoComponent } from './pages/carrito/carrito.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
+import { ConfirmacionPedidoComponent } from './pages/confirmacion-pedido/confirmacion-pedido.component';
+
+// Otros
+
 
 @NgModule({
   declarations: [
@@ -72,7 +76,8 @@ import { CheckoutComponent } from './pages/checkout/checkout.component';
     CategoriasListaComponent,
     CategoriaFormComponent,
     CarritoComponent,
-    CheckoutComponent
+    CheckoutComponent,
+    ConfirmacionPedidoComponent
   ],
   imports: [
     BrowserModule,

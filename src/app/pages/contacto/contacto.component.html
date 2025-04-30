@@ -5,43 +5,77 @@
     <div class="contacto-content">
         <div class="contacto-info">
             <h2>Información de Contacto</h2>
-            <p><strong>Dirección:</strong> Av. Ejemplo 1234, Santiago, Chile</p>
-            <p><strong>Teléfono:</strong> +56 9 1234 5678</p>
-            <p><strong>Email:</strong> info@motomotostore.cl</p>
+            <p><strong>Dirección:</strong> Rep de Estados Unidos 5615, Huechuraba, Santiago, Metropolitana, Chile</p>
+            <p><strong>Teléfono:</strong> +56 9 5615 1963</p>
+            <p><strong>Email:</strong> moto.chile.store@gmail.com</p>
             <p><strong>Horario de atención:</strong> Lunes a Viernes de 9:00 a 18:00 hrs.</p>
             
+            <!-- Aquí va el mapa -->
             <div class="mapa">
-                <!-- Aquí iría un mapa, por ahora un placeholder -->
-                <div class="mapa-placeholder">
-                    Mapa de ubicación
-                </div>
+                
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3344.7197048918346!2d-70.67108928529902!3d-33.38269538079386!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662c6a93a2cb0d7%3A0x8a5d418c7ea3a2a5!2sRep%C3%BAblica%20de%20Estados%20Unidos%205615%2C%20Huechuraba%2C%20Regi%C3%B3n%20Metropolitana!5e0!3m2!1ses!2scl!4v1619532522754!5m2!1ses!2scl" 
+                    width="100%" 
+                    height="300" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
             </div>
         </div>
         
         <div class="contacto-form">
             <h2>Envíanos un mensaje</h2>
-            <form>
+            
+            <!-- Alerta de éxito -->
+            <div class="alert alert-success" *ngIf="mensajeEnviado">
+                <p>¡Tu mensaje ha sido enviado con éxito! Nos pondremos en contacto contigo pronto.</p>
+            </div>
+            
+            <!-- Alerta de error -->
+            <div class="alert alert-danger" *ngIf="error">
+                <p>{{ mensajeError }}</p>
+            </div>
+            
+            <form [formGroup]="contactoForm" (ngSubmit)="enviarMensaje()">
                 <div class="form-group">
                     <label for="nombre">Nombre</label>
-                    <input type="text" id="nombre" placeholder="Tu nombre">
+                    <input type="text" id="nombre" formControlName="nombre" placeholder="Tu nombre">
+                    <div class="error-message" *ngIf="submitted && contactoForm.get('nombre')?.errors">
+                        <span *ngIf="contactoForm.get('nombre')?.hasError('required')">El nombre es obligatorio</span>
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="Tu email">
+                    <input type="email" id="email" formControlName="email" placeholder="Tu email">
+                    <div class="error-message" *ngIf="submitted && contactoForm.get('email')?.errors">
+                        <span *ngIf="contactoForm.get('email')?.hasError('required')">El email es obligatorio</span>
+                        <span *ngIf="contactoForm.get('email')?.hasError('email')">Ingrese un email válido</span>
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="asunto">Asunto</label>
-                    <input type="text" id="asunto" placeholder="Asunto del mensaje">
+                    <input type="text" id="asunto" formControlName="asunto" placeholder="Asunto del mensaje">
+                    <div class="error-message" *ngIf="submitted && contactoForm.get('asunto')?.errors">
+                        <span *ngIf="contactoForm.get('asunto')?.hasError('required')">El asunto es obligatorio</span>
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="mensaje">Mensaje</label>
-                    <textarea id="mensaje" rows="5" placeholder="Tu mensaje"></textarea>
+                    <textarea id="mensaje" rows="5" formControlName="mensaje" placeholder="Tu mensaje"></textarea>
+                    <div class="error-message" *ngIf="submitted && contactoForm.get('mensaje')?.errors">
+                        <span *ngIf="contactoForm.get('mensaje')?.hasError('required')">El mensaje es obligatorio</span>
+                    </div>
                 </div>
                 
-                <button type="submit">Enviar Mensaje</button>
+                <button type="submit" [disabled]="enviando">
+                    <span *ngIf="!enviando">Enviar Mensaje</span>
+                    <span *ngIf="enviando">Enviando...</span>
+                </button>
             </form>
         </div>
     </div>

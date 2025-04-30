@@ -24,16 +24,18 @@ const productosRoutes = require('./routes/productos');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const usuariosRoutes = require('./routes/usuarios');
-const categoriasRoutes = require('./routes/categorias'); // Nueva línea
-const pedidosRoutes = require('./routes/pedidos'); // Nueva línea
+const categoriasRoutes = require('./routes/categorias');
+const pedidosRoutes = require('./routes/pedidos');
+const contactoRoutes = require('./routes/contacto');
 
 app.use('/api/admin/usuarios', usuariosRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api/admin/productos', productosRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/admin/categorias', categoriasRoutes); // Nueva línea
-app.use('/api/pedidos', pedidosRoutes); // Nueva línea
+app.use('/api/admin/categorias', categoriasRoutes);
+app.use('/api/pedidos', pedidosRoutes);
+app.use('/api/contacto', contactoRoutes);
 
 // Añadir una ruta específica para categorías (esto es temporal para diagnosticar)
 app.get('/api/productos/categoria/:categoria', async (req, res) => {
@@ -58,4 +60,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
-// Añadir una ruta específica para subcategorías

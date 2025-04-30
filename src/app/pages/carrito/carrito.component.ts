@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CarritoService, CarritoItem } from '../../services/carrito.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-carrito',
@@ -13,7 +14,8 @@ export class CarritoComponent implements OnInit {
   
   constructor(
     private carritoService: CarritoService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -55,9 +57,20 @@ export class CarritoComponent implements OnInit {
   }
 
   procesarCompra(): void {
-    // Por ahora solo mostraremos un mensaje
-    alert('¡Gracias por su compra! Funcionalidad en desarrollo.');
-    this.carritoService.vaciarCarrito();
-    this.router.navigate(['/']);
+    // Verificar si el usuario está autenticado
+    if (!this.authService.estaLogueado()) {
+      if (confirm('Necesitas iniciar sesión para completar la compra. ¿Deseas ir a la página de inicio de sesión?')) {
+        // Redirección simple con query params
+        this.router.navigate(['/login'], { queryParams: { returnUrl: '/checkout' } });
+      }
+      return;
+    }
+    
+    // Si hay productos en el carrito y el usuario está autenticado, redireccionar al checkout
+    if (this.items.length > 0) {
+      this.router.navigate(['/checkout']);
+    } else {
+      alert('No hay productos en el carrito');
+    }
   }
 }

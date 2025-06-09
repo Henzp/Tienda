@@ -1,0 +1,55 @@
+<div class="products-container">
+  <div class="toolbar">
+    <div class="search-box">
+      <input type="text" placeholder="Buscar productos..." [(ngModel)]="searchTerm" (keyup)="filterProducts()">
+      <i class="fas fa-search"></i>
+    </div>
+    
+    <button class="btn-new" (click)="nuevoProducto()">
+      <i class="fas fa-plus"></i> Nuevo Producto
+    </button>
+  </div>
+
+  <div class="loading-spinner" *ngIf="cargando">
+    <i class="fas fa-spinner fa-spin"></i>
+    <span>Cargando productos...</span>
+  </div>
+  
+  <div class="error-message" *ngIf="error">
+    <i class="fas fa-exclamation-circle"></i> {{ error }}
+  </div>
+  
+  <div class="products-grid" *ngIf="!cargando && filteredProducts.length > 0">
+    <div class="product-card" *ngFor="let producto of filteredProducts">
+      <div class="product-image">
+        <img [src]="producto.imagenUrl" [alt]="producto.nombre" (error)="handleImageError($event)">
+        <div class="product-badge" *ngIf="producto.destacado">Destacado</div>
+      </div>
+      
+      <div class="product-details">
+        <h3>{{ producto.nombre }}</h3>
+        <div class="product-category">{{ producto.categoria }}</div>
+        <div class="product-price">${{ producto.precio | number:'1.2-2' }}</div>
+        <div class="product-stock" [ngClass]="{'in-stock': producto.stock > 0, 'out-stock': producto.stock === 0}">
+          <span *ngIf="producto.stock > 0">En stock: {{ producto.stock }}</span>
+          <span *ngIf="producto.stock === 0">Sin stock</span>
+        </div>
+      </div>
+      
+      <div class="product-actions">
+        <button class="btn-edit" (click)="editarProducto(producto._id)">
+          <i class="fas fa-edit"></i> Editar
+        </button>
+        <button class="btn-delete" (click)="eliminarProducto(producto._id, $event)">
+          <i class="fas fa-trash"></i> Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="no-products" *ngIf="!cargando && filteredProducts.length === 0">
+    <i class="fas fa-box-open"></i>
+    <p>No hay productos disponibles</p>
+    <button class="btn-new" (click)="nuevoProducto()">Crear nuevo producto</button>
+  </div>
+</div>

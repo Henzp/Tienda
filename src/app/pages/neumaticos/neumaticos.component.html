@@ -1,0 +1,44 @@
+<div class="neumaticos-container">
+    <h1>Neumáticos para Motos</h1>
+    
+    <div class="descripcion-categoria">
+        <p>Descubre nuestra amplia selección de neumáticos de alta calidad para tu moto. Ofrecemos las mejores marcas para garantizar seguridad y rendimiento en cualquier tipo de terreno.</p>
+    </div>
+    
+    <div class="filtros-marca">
+        <h3>Filtrar por marca:</h3>
+        <div class="botones-marca">
+            <button 
+                (click)="filtrarPorMarca('todas')" 
+                [class.active]="marcaSeleccionada === 'todas'">
+                Todas las marcas
+            </button>
+            <button 
+                *ngFor="let marca of marcas"
+                (click)="filtrarPorMarca(marca)"
+                [class.active]="marcaSeleccionada === marca">
+                {{ marca }}
+            </button>
+        </div>
+    </div>
+    
+    <!-- Mensaje si no hay productos -->
+    <div class="no-productos" *ngIf="neumaticosFiltrados.length === 0">
+        <p>No hay neumáticos disponibles para esta marca en este momento.</p>
+        <button (click)="filtrarPorMarca('todas')">Ver todos los neumáticos</button>
+    </div>
+    
+    <!-- Grid de productos -->
+    <div class="productos-grid" *ngIf="neumaticosFiltrados.length > 0">
+        <div class="producto-card" *ngFor="let neumatico of neumaticosFiltrados">
+            <img [src]="neumatico.imagenUrl" [alt]="neumatico.nombre">
+            <div class="card-content">
+                <h3 class="producto-titulo">{{ neumatico.nombre }}</h3>
+                <p class="producto-descripcion">{{ neumatico.descripcion }}</p>
+                <p class="producto-sku" *ngIf="neumatico.sku">SKU: {{ neumatico.sku }}</p>
+                <p class="precio">${{ neumatico.precio | number }}</p>
+            </div>
+            <button class="ver-detalles" (click)="verDetalles(neumatico.id)">Ver Detalles</button>
+        </div>
+    </div>
+</div>

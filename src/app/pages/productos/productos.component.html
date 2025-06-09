@@ -1,0 +1,37 @@
+<div class="productos-container">
+    <h1>Nuestros Productos</h1>
+    
+    <!-- Mostrar resultados de búsqueda si hay un término -->
+    <div class="busqueda-info" *ngIf="terminoBusqueda">
+        <h2>Resultados para: "{{ terminoBusqueda }}"</h2>
+        <button class="btn-limpiar" (click)="limpiarBusqueda()">Limpiar búsqueda</button>
+    </div>
+    
+    <!-- Mostrar filtros solo si no hay búsqueda activa -->
+    <div class="filtros" *ngIf="!terminoBusqueda">
+        <button (click)="filtrarPorCategoria('todos')" [class.active]="categoriaActual === 'todos'">Todos</button>
+        <button (click)="filtrarPorCategoria('Cascos')" [class.active]="categoriaActual === 'Cascos'">Cascos</button>
+        <button (click)="filtrarPorCategoria('Guantes')" [class.active]="categoriaActual === 'Guantes'">Guantes</button>
+        <button (click)="filtrarPorCategoria('Neumáticos')" [class.active]="categoriaActual === 'Neumáticos'">Neumáticos</button>
+        <button (click)="filtrarPorCategoria('Accesorios')" [class.active]="categoriaActual === 'Accesorios'">Accesorios</button>
+    </div>
+    
+    <!-- Mensaje si no hay resultados -->
+    <div class="no-resultados" *ngIf="productosFiltrados.length === 0">
+        <p>No se encontraron productos que coincidan con tu búsqueda.</p>
+        <button (click)="limpiarBusqueda()">Ver todos los productos</button>
+    </div>
+    
+<!-- Grid de productos mejorado -->
+<div class="productos-grid">
+    <div class="producto-card" *ngFor="let producto of productosFiltrados">
+      <img [src]="producto.imagenUrl" [alt]="producto.nombre">
+      <div class="producto-info">
+        <h3>{{ producto.nombre }}</h3>
+        <p class="descripcion">{{ producto.descripcion }}</p>
+        <p class="sku" *ngIf="producto.sku">SKU: {{ producto.sku }}</p>
+        <p class="precio">${{ producto.precio | number }}</p>
+      </div>
+      <button (click)="verDetalles(producto.id)">Ver Detalles</button>
+</div>
+</div>

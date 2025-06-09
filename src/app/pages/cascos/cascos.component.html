@@ -1,0 +1,42 @@
+<div class="cascos-container">
+    <h1>Cascos para Motos</h1>
+    
+    <div class="descripcion-categoria">
+        <p>Descubre nuestra completa selección de cascos de alta calidad para motociclistas. Ofrecemos diversos modelos que combinan seguridad, comodidad y estilo para que disfrutes de tus recorridos con total protección.</p>
+    </div>
+    
+    <div class="filtros-marca" *ngIf="marcas.length > 1">
+        <h3>Filtrar por marca:</h3>
+        <div class="botones-marca">
+            <button 
+                (click)="filtrarPorMarca('todas')" 
+                [class.active]="marcaSeleccionada === 'todas'">
+                Todas las marcas
+            </button>
+            <button 
+                *ngFor="let marca of marcas"
+                (click)="filtrarPorMarca(marca)"
+                [class.active]="marcaSeleccionada === marca">
+                {{ marca }}
+            </button>
+        </div>
+    </div>
+    
+    <!-- Mensaje si no hay productos -->
+    <div class="no-productos" *ngIf="cascosFiltrados.length === 0">
+        <p>No hay cascos disponibles en este momento.</p>
+        <button (click)="filtrarPorMarca('todas')" *ngIf="cascos.length > 0">Ver todos los cascos</button>
+    </div>
+    
+    <!-- Grid de productos -->
+    <div class="productos-grid" *ngIf="cascosFiltrados.length > 0">
+        <div class="producto-card" *ngFor="let casco of cascosFiltrados">
+            <img [src]="casco.imagenUrl" [alt]="casco.nombre">
+            <h3>{{ casco.nombre }}</h3>
+            <div class="marca" *ngIf="casco.marca">{{ casco.marca }}</div>
+            <div class="sku" *ngIf="casco.sku">SKU: {{ casco.sku }}</div>
+            <div class="precio">${{ casco.precio | number }}</div>
+            <button class="ver-detalles" (click)="verDetalles(casco.id)">Ver Detalles</button>
+        </div>
+    </div>
+</div>

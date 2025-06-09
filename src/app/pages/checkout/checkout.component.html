@@ -1,0 +1,441 @@
+<div class="checkout-container">
+  <h1>Finalizar Compra</h1>
+  
+  <div class="checkout-progress">
+    <div class="progress-step" [class.active]="paso === 1">1. Datos de envío</div>
+    <div class="progress-step" [class.active]="paso === 2">2. Método de envío</div>
+    <div class="progress-step" [class.active]="paso === 3">3. Pago</div>
+    <div class="progress-step" [class.active]="paso === 4">4. Confirmación</div>
+  </div>
+  
+  <div class="checkout-content">
+    <div class="checkout-form-container">
+      <form [formGroup]="checkoutForm" (ngSubmit)="procesarCompra()">
+        
+        <!-- PASO 1: Datos de envío -->
+        <div class="checkout-step" *ngIf="paso === 1">
+          <h2>Datos de Envío</h2>
+          
+          <div class="form-card">
+            <div formGroupName="datosEnvio">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="nombre">Nombre</label>
+                  <input 
+                    type="text" 
+                    id="nombre" 
+                    placeholder="Tu nombre"
+                    formControlName="nombre">
+                  <div class="error-message" *ngIf="submitted && !datosEnvioForm.get('nombre')?.valid">
+                    El nombre es obligatorio
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="apellido">Apellido</label>
+                  <input 
+                    type="text" 
+                    id="apellido" 
+                    placeholder="Tu apellido"
+                    formControlName="apellido">
+                  <div class="error-message" *ngIf="submitted && !datosEnvioForm.get('apellido')?.valid">
+                    El apellido es obligatorio
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input 
+                    type="email" 
+                    id="email" 
+                    placeholder="Tu email"
+                    formControlName="email">
+                  <div class="error-message" *ngIf="submitted && datosEnvioForm.get('email')?.errors?.['required']">
+                    El email es obligatorio
+                  </div>
+                  <div class="error-message" *ngIf="submitted && datosEnvioForm.get('email')?.errors?.['email']">
+                    Ingrese un email válido
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="telefono">Teléfono</label>
+                  <input 
+                    type="tel" 
+                    id="telefono" 
+                    placeholder="Tu teléfono"
+                    formControlName="telefono">
+                  <div class="error-message" *ngIf="submitted && !datosEnvioForm.get('telefono')?.valid">
+                    El teléfono es obligatorio
+                  </div>
+                </div>
+              </div>
+            
+              <div class="form-group">
+                <label for="direccion">Dirección</label>
+                <input 
+                  type="text" 
+                  id="direccion" 
+                  placeholder="Dirección de envío"
+                  formControlName="direccion">
+                <div class="error-message" *ngIf="submitted && !datosEnvioForm.get('direccion')?.valid">
+                  La dirección es obligatoria
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="ciudad">Ciudad</label>
+                  <input 
+                    type="text" 
+                    id="ciudad" 
+                    placeholder="Ciudad"
+                    formControlName="ciudad">
+                  <div class="error-message" *ngIf="submitted && !datosEnvioForm.get('ciudad')?.valid">
+                    La ciudad es obligatoria
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="codigoPostal">Código Postal</label>
+                  <input 
+                    type="text" 
+                    id="codigoPostal" 
+                    placeholder="Código postal"
+                    formControlName="codigoPostal">
+                  <div class="error-message" *ngIf="submitted && !datosEnvioForm.get('codigoPostal')?.valid">
+                    El código postal es obligatorio
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="provincia">Provincia/Región</label>
+                  <input 
+                    type="text" 
+                    id="provincia" 
+                    placeholder="Provincia o región"
+                    formControlName="provincia">
+                </div>
+                
+                <div class="form-group">
+                  <label for="pais">País</label>
+                  <select id="pais" formControlName="pais">
+                    <option value="Chile">Chile</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="instrucciones">Instrucciones de entrega (opcional)</label>
+                <textarea 
+                  id="instrucciones" 
+                  placeholder="Instrucciones adicionales para la entrega" 
+                  rows="3"
+                  formControlName="instrucciones"></textarea>
+              </div>
+            </div>
+          </div>
+          
+          <div class="step-buttons">
+            <button type="button" (click)="continuarComprando()" class="btn-secundario">
+              <i class="fas fa-arrow-left"></i> Volver al carrito
+            </button>
+            <button type="button" (click)="siguiente()" class="btn-primario">
+              Continuar <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- PASO 2: Método de envío -->
+        <div class="checkout-step" *ngIf="paso === 2">
+          <h2>Método de Envío</h2>
+          
+          <div class="form-card">
+            <div formGroupName="metodoEnvio">
+              <div class="shipping-options">
+                <div 
+                  class="shipping-option" 
+                  [class.selected]="metodoEnvioForm.get('tipo')?.value === 'estandar'"
+                  (click)="metodoEnvioForm.get('tipo')?.setValue('estandar')">
+                  <input 
+                    type="radio" 
+                    id="envio-estandar" 
+                    value="estandar"
+                    formControlName="tipo">
+                  <div class="option-content">
+                    <div class="option-info">
+                      <h3>Envío Estándar</h3>
+                      <p>Entrega en 3-5 días hábiles</p>
+                    </div>
+                    <span class="shipping-price">$2,990</span>
+                  </div>
+                </div>
+                
+                <div 
+                  class="shipping-option" 
+                  [class.selected]="metodoEnvioForm.get('tipo')?.value === 'express'"
+                  (click)="metodoEnvioForm.get('tipo')?.setValue('express')">
+                  <input 
+                    type="radio" 
+                    id="envio-express" 
+                    value="express"
+                    formControlName="tipo">
+                  <div class="option-content">
+                    <div class="option-info">
+                      <h3>Envío Express</h3>
+                      <p>Entrega en 24-48 horas</p>
+                    </div>
+                    <span class="shipping-price">$5,990</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="error-message" *ngIf="submitted && !metodoEnvioForm.get('tipo')?.valid">
+                Seleccione un método de envío
+              </div>
+            </div>
+          </div>
+          
+          <div class="step-buttons">
+            <button type="button" (click)="anterior()" class="btn-secundario">
+              <i class="fas fa-arrow-left"></i> Anterior
+            </button>
+            <button type="button" (click)="siguiente()" class="btn-primario">
+              Continuar <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- PASO 3: Método de pago -->
+        <div class="checkout-step" *ngIf="paso === 3">
+          <h2>Método de Pago</h2>
+          
+          <div class="form-card">
+            <div class="payment-options">
+              <div 
+                class="payment-option" 
+                [class.selected]="checkoutForm.get('metodoPago')?.value === 'tarjeta'"
+                (click)="checkoutForm.get('metodoPago')?.setValue('tarjeta')">
+                <input 
+                  type="radio" 
+                  id="pago-tarjeta" 
+                  value="tarjeta"
+                  formControlName="metodoPago">
+                <div class="option-content">
+                  <div class="option-info">
+                    <h3>Tarjeta de Crédito/Débito</h3>
+                    <p>Pago seguro con tarjeta</p>
+                  </div>
+                  <div class="payment-icons">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                  </div>
+                </div>
+              </div>
+              
+              <div 
+                class="payment-option" 
+                [class.selected]="checkoutForm.get('metodoPago')?.value === 'transferencia'"
+                (click)="checkoutForm.get('metodoPago')?.setValue('transferencia')">
+                <input 
+                  type="radio" 
+                  id="pago-transferencia" 
+                  value="transferencia"
+                  formControlName="metodoPago">
+                <div class="option-content">
+                  <div class="option-info">
+                    <h3>Transferencia Bancaria</h3>
+                    <p>Pago mediante transferencia a nuestra cuenta</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div 
+                class="payment-option" 
+                [class.selected]="checkoutForm.get('metodoPago')?.value === 'contrarembolso'"
+                (click)="checkoutForm.get('metodoPago')?.setValue('contrarembolso')">
+                <input 
+                  type="radio" 
+                  id="pago-contrarembolso" 
+                  value="contrarembolso"
+                  formControlName="metodoPago">
+                <div class="option-content">
+                  <div class="option-info">
+                    <h3>Pago contra entrega</h3>
+                    <p>Paga cuando recibas tu pedido</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="error-message" *ngIf="submitted && !checkoutForm.get('metodoPago')?.valid">
+              Seleccione un método de pago
+            </div>
+          </div>
+          
+          <div class="step-buttons">
+            <button type="button" (click)="anterior()" class="btn-secundario">
+              <i class="fas fa-arrow-left"></i> Anterior
+            </button>
+            <button type="button" (click)="siguiente()" class="btn-primario">
+              Continuar <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- PASO 4: Confirmación de pedido -->
+        <div class="checkout-step" *ngIf="paso === 4">
+          <h2>Confirmar Pedido</h2>
+          
+          <div class="form-card">
+            <h3>Productos</h3>
+            <div class="pedido-productos">
+              <div class="producto-item" *ngFor="let item of items">
+                <div class="producto-info">
+                  <img [src]="item.imagenUrl" [alt]="item.nombre">
+                  <div>
+                    <h4>{{ item.nombre }}</h4>
+                    <p>Cantidad: {{ item.cantidad }}</p>
+                  </div>
+                </div>
+                <div class="producto-precio">${{ item.precio * item.cantidad | number }}</div>
+              </div>
+            </div>
+            
+            <div class="resumen-costos">
+              <div class="costo-linea">
+                <span>Subtotal:</span>
+                <span>${{ subtotal | number }}</span>
+              </div>
+              <div class="costo-linea">
+                <span>Envío ({{ metodoEnvioForm.get('tipo')?.value === 'estandar' ? 'Estándar' : 'Express' }}):</span>
+                <span>${{ costoEnvio | number }}</span>
+              </div>
+              <div class="costo-linea total">
+                <span>Total:</span>
+                <span>${{ total | number }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-card">
+            <h3>Datos de Envío</h3>
+            
+            <div class="datos-resumen">
+              <div class="dato-item">
+                <span class="dato-label">Nombre:</span>
+                <span class="dato-valor">{{ datosEnvioForm.get('nombre')?.value }} {{ datosEnvioForm.get('apellido')?.value }}</span>
+              </div>
+              
+              <div class="dato-item">
+                <span class="dato-label">Email:</span>
+                <span class="dato-valor">{{ datosEnvioForm.get('email')?.value }}</span>
+              </div>
+              
+              <div class="dato-item">
+                <span class="dato-label">Teléfono:</span>
+                <span class="dato-valor">{{ datosEnvioForm.get('telefono')?.value }}</span>
+              </div>
+              
+              <div class="dato-item">
+                <span class="dato-label">Dirección:</span>
+                <span class="dato-valor">{{ datosEnvioForm.get('direccion')?.value }}</span>
+              </div>
+              
+              <div class="dato-item">
+                <span class="dato-label">Ciudad:</span>
+                <span class="dato-valor">{{ datosEnvioForm.get('ciudad')?.value }}</span>
+              </div>
+              
+              <div class="dato-item">
+                <span class="dato-label">Código Postal:</span>
+                <span class="dato-valor">{{ datosEnvioForm.get('codigoPostal')?.value }}</span>
+              </div>
+              
+              <div class="dato-item" *ngIf="datosEnvioForm.get('provincia')?.value">
+                <span class="dato-label">Provincia:</span>
+                <span class="dato-valor">{{ datosEnvioForm.get('provincia')?.value }}</span>
+              </div>
+              
+              <div class="dato-item">
+                <span class="dato-label">País:</span>
+                <span class="dato-valor">{{ datosEnvioForm.get('pais')?.value }}</span>
+              </div>
+              
+              <div class="dato-item" *ngIf="datosEnvioForm.get('instrucciones')?.value">
+                <span class="dato-label">Instrucciones:</span>
+                <span class="dato-valor">{{ datosEnvioForm.get('instrucciones')?.value }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-card">
+            <h3>Método de Pago</h3>
+            <p class="metodo-pago-texto">{{ getMetodoPagoTexto() }}</p>
+            
+            <div class="terminos-condiciones">
+              <label class="checkbox-container">
+                <input type="checkbox" formControlName="aceptarTerminos">
+                <span class="checkbox-text">Acepto los <a href="/terminos" target="_blank">términos y condiciones</a></span>
+              </label>
+              <div class="error-message" *ngIf="submitted && !checkoutForm.get('aceptarTerminos')?.valid">
+                Debes aceptar los términos y condiciones
+              </div>
+            </div>
+          </div>
+          
+          <div class="step-buttons">
+            <button type="button" (click)="anterior()" class="btn-secundario">
+              <i class="fas fa-arrow-left"></i> Anterior
+            </button>
+            <button type="submit" class="btn-primario" [disabled]="procesando">
+              <span *ngIf="!procesando">Finalizar Compra</span>
+              <span *ngIf="procesando"><i class="fas fa-spinner fa-spin"></i> Procesando...</span>
+            </button>
+          </div>
+        </div>
+        
+      </form>
+    </div>
+    
+    <!-- Resumen del pedido (lateral) -->
+    <div class="checkout-sidebar">
+      <div class="cart-summary">
+        <h3>Resumen del Pedido</h3>
+        
+        <div class="cart-items-mini">
+          <div class="cart-item-mini" *ngFor="let item of items">
+            <img [src]="item.imagenUrl" [alt]="item.nombre">
+            <div class="item-mini-details">
+              <h4>{{ item.nombre }}</h4>
+              <div class="item-mini-price">
+                <span>{{ item.cantidad }} x ${{ item.precio | number }}</span>
+                <span>${{ item.precio * item.cantidad | number }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="cart-totals">
+          <div class="total-line">
+            <span>Subtotal:</span>
+            <span>${{ subtotal | number }}</span>
+          </div>
+          <div class="total-line">
+            <span>Envío:</span>
+            <span>${{ costoEnvio | number }}</span>
+          </div>
+          <div class="total-line grand-total">
+            <span>Total:</span>
+            <span>${{ total | number }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

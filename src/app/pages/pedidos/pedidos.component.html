@@ -1,0 +1,61 @@
+<div class="pedidos-container">
+    <div class="container">
+      <div class="pedidos-header">
+        <h1>Mis Pedidos</h1>
+        <p>Consulta el estado de tus pedidos y el historial de compras</p>
+      </div>
+  
+      <div class="loading-container" *ngIf="cargando">
+        <div class="spinner"></div>
+        <p>Cargando tus pedidos...</p>
+      </div>
+  
+      <div class="error-message" *ngIf="error && !cargando">
+        <p>{{ error }}</p>
+        <button class="btn-reintentar" (click)="cargarPedidos()">Reintentar</button>
+      </div>
+  
+      <div class="pedidos-empty" *ngIf="!cargando && !error && pedidos.length === 0">
+        <div class="empty-icon">
+          <i class="fas fa-shopping-bag"></i>
+        </div>
+        <h2>No tienes pedidos recientes</h2>
+        <p>Parece que aún no has realizado ninguna compra</p>
+        <a routerLink="/productos" class="btn-comprar">Explorar productos</a>
+      </div>
+  
+      <div class="pedidos-list" *ngIf="!cargando && pedidos.length > 0">
+        <div class="pedidos-card" *ngFor="let pedido of pedidos">
+          <div class="pedido-header">
+            <div class="pedido-info">
+              <h3>Pedido #{{ pedido.numeroPedido }}</h3>
+              <p class="pedido-fecha">{{ formatearFecha(pedido.fechaCreacion) }}</p>
+            </div>
+            <div class="pedido-estado">
+              <span [ngClass]="getEstadoClase(pedido.estado)">{{ pedido.estado }}</span>
+            </div>
+          </div>
+  
+          <div class="pedido-productos">
+            <div class="producto-item" *ngFor="let producto of pedido.productos">
+              <div class="producto-img">
+                <img [src]="producto.imagenUrl" [alt]="producto.nombre">
+              </div>
+              <div class="producto-info">
+                <h4>{{ producto.nombre }}</h4>
+                <p class="producto-cantidad">Cantidad: {{ producto.cantidad }}</p>
+                <p class="producto-precio">${{ producto.precio | number }}</p>
+              </div>
+            </div>
+          </div>
+  
+          <div class="pedido-footer">
+            <div class="pedido-total">
+              <p>Total: <span>${{ pedido.total | number }}</span></p>
+            </div>
+            <button class="btn-detalle" (click)="verDetallePedido(pedido._id)">Ver detalles</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

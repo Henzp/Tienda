@@ -1,0 +1,98 @@
+<div class="admin-container">
+    <div class="admin-header">
+      <h1>Administración de Pedidos</h1>
+      <p>Gestiona todos los pedidos de la tienda</p>
+    </div>
+  
+    <div class="admin-filtros">
+      <div class="filtro-seccion">
+        <h3>Filtrar pedidos</h3>
+        <div class="filtros-form">
+          <div class="filtro-grupo">
+            <label for="filtroEstado">Estado:</label>
+            <select id="filtroEstado" [(ngModel)]="filtroEstado">
+              <option value="todos">Todos</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="procesando">Procesando</option>
+              <option value="enviado">Enviado</option>
+              <option value="entregado">Entregado</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+          </div>
+          <div class="filtro-grupo">
+            <label for="filtroDesde">Desde:</label>
+            <input type="date" id="filtroDesde" [(ngModel)]="filtroDesde">
+          </div>
+          <div class="filtro-grupo">
+            <label for="filtroHasta">Hasta:</label>
+            <input type="date" id="filtroHasta" [(ngModel)]="filtroHasta">
+          </div>
+          <div class="filtro-acciones">
+            <button class="btn-aplicar" (click)="aplicarFiltros()">Aplicar</button>
+            <button class="btn-limpiar" (click)="limpiarFiltros()">Limpiar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="loading-container" *ngIf="cargando">
+      <div class="spinner"></div>
+      <p>Cargando pedidos...</p>
+    </div>
+  
+    <div class="error-message" *ngIf="error && !cargando">
+      <p>{{ error }}</p>
+      <button class="btn-reintentar" (click)="cargarPedidos()">Reintentar</button>
+    </div>
+  
+    <div class="pedidos-empty" *ngIf="!cargando && !error && pedidos.length === 0">
+      <div class="empty-icon">
+        <i class="fas fa-shopping-bag"></i>
+      </div>
+      <h2>No hay pedidos disponibles</h2>
+      <p>No se encontraron pedidos que coincidan con los criterios de búsqueda</p>
+    </div>
+  
+    <div class="pedidos-tabla" *ngIf="!cargando && pedidos.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Nº Pedido</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pedido of pedidos">
+            <td>{{ pedido.numeroPedido }}</td>
+            <td>{{ formatearFecha(pedido.fechaCreacion) }}</td>
+            <td>{{ pedido.datosEnvio?.nombre }} {{ pedido.datosEnvio?.apellido }}</td>
+            <td>${{ pedido.total | number }}</td>
+            <td>
+              <span [ngClass]="getEstadoClase(pedido.estado)">{{ pedido.estado }}</span>
+            </td>
+            <td class="acciones">
+              <button class="btn-ver" (click)="verDetallePedido(pedido._id)" title="Ver detalles">
+                <i class="fas fa-eye"></i>
+              </button>
+              <div class="dropdown">
+                <button class="btn-estado dropdown-toggle" title="Cambiar estado">
+                  <i class="fas fa-cog"></i>
+                </button>
+                <div class="dropdown-menu">
+                  <a (click)="cambiarEstado(pedido, 'pendiente')">Pendiente</a>
+                  <a (click)="cambiarEstado(pedido, 'procesando')">Procesando</a>
+                  <a (click)="cambiarEstado(pedido, 'enviado')">Enviado</a>
+                  <a (click)="cambiarEstado(pedido, 'entregado')">Entregado</a>
+                  <a (click)="cambiarEstado(pedido, 'cancelado')">Cancelado</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>

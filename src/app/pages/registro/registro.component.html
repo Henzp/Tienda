@@ -1,0 +1,55 @@
+<div class="registro-container">
+    <div class="registro-card">
+      <h1>Crear cuenta</h1>
+      
+      <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="nombre">Nombre completo</label>
+          <input type="text" id="nombre" class="form-control" formControlName="nombre">
+          <div class="validation-error" *ngIf="registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched">
+            El nombre es obligatorio
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" class="form-control" formControlName="email">
+          <div class="validation-error" *ngIf="registroForm.get('email')?.invalid && registroForm.get('email')?.touched">
+            <span *ngIf="registroForm.get('email')?.errors?.['required']">El email es obligatorio</span>
+            <span *ngIf="registroForm.get('email')?.errors?.['email']">Introduce un email válido</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" class="form-control" formControlName="password">
+          <div class="validation-error" *ngIf="registroForm.get('password')?.invalid && registroForm.get('password')?.touched">
+            <span *ngIf="registroForm.get('password')?.errors?.['required']">La contraseña es obligatoria</span>
+            <span *ngIf="registroForm.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="confirmPassword">Confirmar contraseña</label>
+          <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword">
+          <div class="validation-error" *ngIf="registroForm.get('confirmPassword')?.invalid && registroForm.get('confirmPassword')?.touched">
+            <span *ngIf="registroForm.get('confirmPassword')?.errors?.['required']">Debes confirmar la contraseña</span>
+          </div>
+          <div class="validation-error" *ngIf="registroForm.errors?.['passwordMismatch'] && registroForm.get('confirmPassword')?.touched">
+            Las contraseñas no coinciden
+          </div>
+        </div>
+        
+        <div class="error-message" *ngIf="errorMensaje">{{ errorMensaje }}</div>
+        
+        <button type="submit" class="btn-registro" [disabled]="registroForm.invalid || cargando">
+          {{ cargando ? 'Registrando...' : 'Crear cuenta' }}
+        </button>
+      </form>
+      
+      <div class="registro-footer">
+        <p>¿Ya tienes una cuenta? <a routerLink="/login">Iniciar sesión</a></p>
+        <a routerLink="/home">Volver a la tienda</a>
+      </div>
+    </div>
+  </div>

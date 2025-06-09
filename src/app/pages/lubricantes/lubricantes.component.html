@@ -1,0 +1,42 @@
+<div class="lubricantes-container">
+    <h1>Lubricantes para Motos</h1>
+    
+    <div class="descripcion-categoria">
+        <p>Ofrecemos lubricantes de alta calidad para el máximo rendimiento y protección de tu motor. Productos especialmente formulados para motocicletas que prolongan la vida útil y mejoran el desempeño de tu moto.</p>
+    </div>
+    
+    <div class="filtros-marca" *ngIf="marcas.length > 1">
+        <h3>Filtrar por marca:</h3>
+        <div class="botones-marca">
+            <button 
+                (click)="filtrarPorMarca('todas')" 
+                [class.active]="marcaSeleccionada === 'todas'">
+                Todas las marcas
+            </button>
+            <button 
+                *ngFor="let marca of marcas"
+                (click)="filtrarPorMarca(marca)"
+                [class.active]="marcaSeleccionada === marca">
+                {{ marca }}
+            </button>
+        </div>
+    </div>
+    
+    <!-- Mensaje si no hay productos -->
+    <div class="no-productos" *ngIf="lubricantesFiltrados.length === 0">
+        <p>No hay lubricantes disponibles en este momento.</p>
+        <button (click)="filtrarPorMarca('todas')" *ngIf="lubricantes.length > 0">Ver todos los lubricantes</button>
+    </div>
+    
+    <!-- Grid de productos -->
+    <div class="productos-grid" *ngIf="lubricantesFiltrados.length > 0">
+        <div class="producto-card" *ngFor="let lubricante of lubricantesFiltrados">
+            <img [src]="lubricante.imagenUrl" [alt]="lubricante.nombre">
+            <h3>{{ lubricante.nombre }}</h3>
+            <div class="marca" *ngIf="lubricante.marca">{{ lubricante.marca }}</div>
+            <div class="sku" *ngIf="lubricante.sku">SKU: {{ lubricante.sku }}</div>
+            <div class="precio">${{ lubricante.precio | number }}</div>
+            <button class="ver-detalles" (click)="verDetalles(lubricante.id)">Ver Detalles</button>
+        </div>
+    </div>
+</div>

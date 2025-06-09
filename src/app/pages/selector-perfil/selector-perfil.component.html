@@ -1,0 +1,45 @@
+<div class="selector-container">
+  <div class="selector-card">
+    <h1>Acceso a usuario</h1>
+    
+    <div class="form-container">
+      <!-- Formulario de login -->
+      <form (ngSubmit)="onSubmit()" [formGroup]="loginForm">
+        <h2>Iniciar sesión</h2>
+        
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" class="form-control" formControlName="email">
+          <div class="validation-error" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+            Por favor, introduce un email válido
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" class="form-control" formControlName="password">
+          <div class="validation-error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            La contraseña es obligatoria
+          </div>
+        </div>
+        
+        <div class="error-message" *ngIf="errorMensaje">{{ errorMensaje }}</div>
+        
+        <button type="submit" class="btn-login" [disabled]="loginForm.invalid || cargando">
+          {{ cargando ? 'Iniciando sesión...' : 'Iniciar sesión' }}
+        </button>
+      </form>
+      
+      <!-- Sección de registro -->
+      <div class="registro-section">
+        <h2>¿No tienes cuenta?</h2>
+        <p>Regístrate para realizar compras y seguir tus pedidos</p>
+        <button class="btn-registro" (click)="irARegistro()">Registrarse</button>
+      </div>
+    </div>
+    
+    <div class="selector-footer">
+      <a routerLink="/home">Volver a la tienda</a>
+    </div>
+  </div>
+</div>

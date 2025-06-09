@@ -1,0 +1,63 @@
+<div class="repuestos-container">
+    <h1>Repuestos para Motos</h1>
+    
+    <div class="descripcion-categoria">
+        <p>Encuentra todos los repuestos originales y alternativos para tu motocicleta. Ofrecemos una amplia variedad de componentes de alta calidad para que mantengas tu moto en óptimas condiciones.</p>
+    </div>
+    
+    <div class="filtros-categoria">
+        <h3>Filtrar por tipo:</h3>
+        <div class="botones-categoria">
+            <button 
+                (click)="filtrarPorTipo('todos')" 
+                [class.active]="tipoActual === 'todos'">
+                Todos
+            </button>
+            <button 
+                (click)="filtrarPorTipo('frenos')" 
+                [class.active]="tipoActual === 'frenos'">
+                Frenos
+            </button>
+            <button 
+                (click)="filtrarPorTipo('transmision')" 
+                [class.active]="tipoActual === 'transmision'">
+                Transmisión
+            </button>
+            <button 
+                (click)="filtrarPorTipo('motor')" 
+                [class.active]="tipoActual === 'motor'">
+                Motor
+            </button>
+            <button 
+                (click)="filtrarPorTipo('suspension')" 
+                [class.active]="tipoActual === 'suspension'">
+                Suspensión
+            </button>
+            <button 
+                (click)="filtrarPorTipo('electricidad')" 
+                [class.active]="tipoActual === 'electricidad'">
+                Electricidad
+            </button>
+        </div>
+    </div>
+       
+    <!-- Mensaje si no hay productos -->
+    <div class="no-productos" *ngIf="repuestosFiltrados.length === 0">
+        <p>No hay repuestos disponibles para esta selección.</p>
+        <button (click)="filtrarPorTipo('todos'); filtrarPorMarca('todas')">Ver todos los repuestos</button>
+    </div>
+    
+    <!-- Grid de productos -->
+    <div class="productos-grid" *ngIf="repuestosFiltrados.length > 0">
+        <div class="producto-card" *ngFor="let repuesto of repuestosFiltrados">
+            <img [src]="repuesto.imagenUrl" [alt]="repuesto.nombre">
+            <div class="card-content">
+                <h3 class="producto-titulo">{{ repuesto.nombre }}</h3>
+                <p class="producto-descripcion">{{ repuesto.descripcion }}</p>
+                <p class="producto-sku" *ngIf="repuesto.sku">SKU: {{ repuesto.sku }}</p>
+                <p class="precio">${{ repuesto.precio | number }}</p>
+            </div>
+            <button class="ver-detalles" (click)="verDetalles(repuesto.id)">Ver Detalles</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,73 @@
+<div class="carrito-container">
+  <h1>Tu Carrito de Compras</h1>
+  
+  <div class="empty-cart" *ngIf="items.length === 0">
+    <i class="fas fa-shopping-cart"></i>
+    <p>Tu carrito está vacío</p>
+    <button class="btn-continuar" (click)="continuarComprando()">Continuar comprando</button>
+  </div>
+  
+  <div class="cart-content" *ngIf="items.length > 0">
+    <div class="cart-items">
+      <div class="cart-header">
+        <div class="col-producto">Producto</div>
+        <div class="col-precio">Precio</div>
+        <div class="col-cantidad">Cantidad</div>
+        <div class="col-total">Total</div>
+        <div class="col-acciones"></div>
+      </div>
+      
+      <div class="cart-item" *ngFor="let item of items">
+        <div class="col-producto">
+          <img [src]="item.imagenUrl" [alt]="item.nombre">
+          <div class="item-details">
+            <h3>{{ item.nombre }}</h3>
+            <!-- Eliminamos la referencia a item.marca -->
+          </div>
+        </div>
+        
+        <div class="col-precio">${{ item.precio | number }}</div>
+        
+        <div class="col-cantidad">
+          <div class="quantity-control">
+            <button (click)="actualizarCantidad(item.productoId, item.cantidad - 1)" [disabled]="item.cantidad <= 1">
+              <i class="fas fa-minus"></i>
+            </button>
+            <span>{{ item.cantidad }}</span>
+            <button (click)="actualizarCantidad(item.productoId, item.cantidad + 1)" [disabled]="item.cantidad >= 10">
+              <!-- Eliminamos la referencia a item.stock y usamos un valor fijo de 10 -->
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="col-total">${{ item.precio * item.cantidad | number }}</div>
+        
+        <div class="col-acciones">
+          <button class="btn-eliminar" (click)="eliminarItem(item.productoId)" title="Eliminar producto">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="cart-summary">
+      <div class="summary-row">
+        <span>Subtotal:</span>
+        <span>${{ subtotal | number }}</span>
+      </div>
+      
+      <div class="cart-actions">
+        <button class="btn-vaciar" (click)="vaciarCarrito()">
+          <i class="fas fa-trash"></i> Vaciar carrito
+        </button>
+        <button class="btn-continuar" (click)="continuarComprando()">
+          <i class="fas fa-arrow-left"></i> Continuar comprando
+        </button>
+        <button class="btn-procesar" (click)="procesarCompra()">
+          <i class="fas fa-shopping-bag"></i> Procesar compra
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

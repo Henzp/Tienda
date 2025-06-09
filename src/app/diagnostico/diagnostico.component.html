@@ -1,0 +1,20 @@
+<div style="padding: 20px;">
+    <h1>Diagnóstico de conexión</h1>
+    
+    <div style="margin-bottom: 20px; border: 1px solid #ddd; border-radius: 4px;">
+      <div style="background-color: #f0f0f0; padding: 10px;">Productos cargados</div>
+      <div style="padding: 15px;">
+        <p>Total de productos: {{ totalProductos }}</p>
+        <button (click)="cargarProductos()">Cargar productos</button>
+      </div>
+    </div>
+    
+    <div style="margin-bottom: 20px; border: 1px solid #ddd; border-radius: 4px;">
+      <div style="background-color: #f0f0f0; padding: 10px;">Categorías</div>
+      <div style="padding: 15px;">
+        <p *ngIf="categorias.length > 0">Categorías disponibles: {{ categorias.join(', ') }}</p>
+        <p *ngIf="categorias.length === 0">Sin categorías cargadas</p>
+        <button (click)="cargarCategorias()">Cargar categorías</button>
+      </div>
+    </div>
+  </div>

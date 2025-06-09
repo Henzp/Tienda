@@ -50,7 +50,7 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/Tienda/"   // Esta es la línea añadida
+              "baseHref": "/"
             },
             "development": {
               "buildOptimizer": false,
@@ -104,5 +104,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

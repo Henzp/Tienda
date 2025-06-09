@@ -1,3 +1,4 @@
+// Este es el contenido actualizado para: src/app/pages/confirmacion-pedido/confirmacion-pedido.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PedidoService } from '../../services/pedido.service';
@@ -32,17 +33,36 @@ export class ConfirmacionPedidoComponent implements OnInit {
   }
 
   cargarPedido(id: string): void {
+    // Primero intentar cargar desde la API
     this.pedidoService.getPedido(id).subscribe({
       next: (pedido) => {
         this.pedido = pedido;
         this.cargando = false;
       },
       error: (error) => {
-        console.error('Error al cargar el pedido:', error);
-        this.cargando = false;
-        this.error = true;
+        console.warn('Error al cargar pedido desde API, intentando localmente:', error);
+        // Si falla, intentar cargar desde localStorage
+        this.cargarPedidoLocal(id);
       }
     });
+  }
+
+  cargarPedidoLocal(id: string): void {
+    try {
+      const pedidosGuardados = JSON.parse(localStorage.getItem('pedidos') || '[]');
+      this.pedido = pedidosGuardados.find((p: any) => p._id === id);
+      
+      if (!this.pedido) {
+        this.error = true;
+        console.error('Pedido no encontrado en localStorage:', id);
+      }
+      
+      this.cargando = false;
+    } catch (error) {
+      console.error('Error al cargar pedido desde localStorage:', error);
+      this.error = true;
+      this.cargando = false;
+    }
   }
 
   irAProductos(): void {

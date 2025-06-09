@@ -13,23 +13,39 @@ export class AuthService {
   private usuarioSubject = new BehaviorSubject<any>(null);
   public usuario$ = this.usuarioSubject.asObservable();
   
-  // Añadir esta propiedad para redireccionamiento
+  // Propiedad para guardar URL de redirección
   public redirectUrl: string | null = null;
 
   constructor(
     private http: HttpClient,
     private router: Router
   ) {
-    // Cargar usuario del localStorage al iniciar
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
+    // Inicializar la autenticación al cargar el servicio
+    this.inicializarAutenticacion();
+  }
+
+  // Verificar token y usuario al iniciar
+  private inicializarAutenticacion(): void {
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('currentUser');
+    
+    if (token && userData) {
       try {
-        const user = JSON.parse(storedUser);
-        this.usuarioSubject.next(user);
-      } catch (e) {
-        localStorage.removeItem('currentUser');
+        const usuario = JSON.parse(userData);
+        this.usuarioSubject.next(usuario);
+        console.log('Autenticación inicializada con éxito');
+      } catch (error) {
+        console.error('Error al parsear datos de usuario:', error);
+        this.limpiarDatosAutenticacion();
       }
     }
+  }
+
+  // Limpiar datos de autenticación
+  private limpiarDatosAutenticacion(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
+    this.usuarioSubject.next(null);
   }
 
   login(email: string, password: string): Observable<any> {
@@ -41,6 +57,7 @@ export class AuthService {
             localStorage.setItem('token', response.token);
             localStorage.setItem('currentUser', JSON.stringify(response.usuario));
             this.usuarioSubject.next(response.usuario);
+            console.log('Login exitoso:', response.usuario);
           }
         })
       );
@@ -51,10 +68,8 @@ export class AuthService {
   }
 
   logout(): void {
-    // Limpiar localStorage y estado
-    localStorage.removeItem('token');
-    localStorage.removeItem('currentUser');
-    this.usuarioSubject.next(null);
+    console.log('Cerrando sesión');
+    this.limpiarDatosAutenticacion();
     this.router.navigate(['/login']);
   }
 
@@ -62,13 +77,34 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  // Método mejorado para verificar autenticación
   estaLogueado(): boolean {
-    return !!this.obtenerToken();
+    const token = this.obtenerToken();
+    const usuario = this.getCurrentUser();
+    const resultado = !!token && !!usuario;
+    console.log('¿Usuario autenticado?', resultado);
+    return resultado;
   }
 
   // Método para obtener el usuario actual
   getCurrentUser(): any {
-    return this.usuarioSubject.value;
+    const usuario = this.usuarioSubject.value;
+    if (!usuario) {
+      // Intentar recuperar del localStorage si no está en el BehaviorSubject
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          this.usuarioSubject.next(parsedUser);
+          return parsedUser;
+        } catch (error) {
+          console.error('Error al recuperar usuario del localStorage:', error);
+          return null;
+        }
+      }
+      return null;
+    }
+    return usuario;
   }
 
   // Método para verificar si el usuario es admin

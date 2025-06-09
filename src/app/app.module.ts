@@ -41,6 +41,9 @@ import { CategoriaFormComponent } from './pages/admin/categoria-form/categoria-f
 import { CarritoComponent } from './pages/carrito/carrito.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { ConfirmacionPedidoComponent } from './pages/confirmacion-pedido/confirmacion-pedido.component';
+import { PedidosComponent } from './pages/pedidos/pedidos.component';
+import { PedidoDetalleComponent } from './pages/pedido-detalle/pedido-detalle.component';
+import { PedidosAdminComponent } from './pages/admin/pedidos-admin/pedidos-admin.component';
 
 // Otros
 
@@ -77,7 +80,10 @@ import { ConfirmacionPedidoComponent } from './pages/confirmacion-pedido/confirm
     CategoriaFormComponent,
     CarritoComponent,
     CheckoutComponent,
-    ConfirmacionPedidoComponent
+    ConfirmacionPedidoComponent,
+    PedidosComponent,
+    PedidoDetalleComponent,
+    PedidosAdminComponent
   ],
   imports: [
     BrowserModule,

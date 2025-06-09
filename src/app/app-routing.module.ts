@@ -20,7 +20,10 @@ import { DiagnosticoComponent } from './diagnostico/diagnostico.component';
 import { SelectorPerfilComponent } from './pages/selector-perfil/selector-perfil.component';
 import { RegistroComponent } from './pages/registro/registro.component';
 import { CarritoComponent } from './pages/carrito/carrito.component';
-import { CarritoService } from './services/carrito.service';  
+
+// Componentes de Pedidos
+import { PedidosComponent } from './pages/pedidos/pedidos.component';
+import { PedidoDetalleComponent } from './pages/pedido-detalle/pedido-detalle.component';
 
 // Componentes Admin
 import { LoginComponent } from './pages/admin/login/login.component';
@@ -32,10 +35,11 @@ import { UsuarioDetalleComponent } from './pages/admin/usuario-detalle/usuario-d
 import { CategoriasListaComponent } from './pages/admin/categorias-lista/categorias-lista.component';
 import { CategoriaFormComponent } from './pages/admin/categoria-form/categoria-form.component'; 
 import { CheckoutComponent } from './pages/checkout/checkout.component';
+import { PedidosAdminComponent } from './pages/admin/pedidos-admin/pedidos-admin.component';
 
-
-// Guard para proteger rutas admin
+// Guards para proteger rutas
 import { AdminGuard } from './guards/admin.guard';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   // Rutas para páginas que no necesitan layout (login, registro, etc.)
@@ -61,7 +65,10 @@ const routes: Routes = [
       { path: 'diagnostico', component: DiagnosticoComponent },
       { path: 'perfiles', component: SelectorPerfilComponent },
       { path: 'carrito', component: CarritoComponent },
-      { path: 'checkout', component: CheckoutComponent },
+      { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
+      // Rutas de pedidos protegidas con AuthGuard
+      { path: 'pedidos', component: PedidosComponent, canActivate: [AuthGuard] },
+      { path: 'pedido/:id', component: PedidoDetalleComponent, canActivate: [AuthGuard] },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },
@@ -79,10 +86,11 @@ const routes: Routes = [
       { path: 'productos/editar/:id', component: ProductoFormComponent },
       { path: 'usuarios', component: UsuariosListaComponent },
       { path: 'usuarios/editar/:id', component: UsuarioDetalleComponent },
-      { path: 'categorias', component: CategoriasListaComponent, canActivate: [AdminGuard] },
-      { path: 'categorias/nueva', component: CategoriaFormComponent, canActivate: [AdminGuard] },
-      { path: 'categorias/editar/:id', component: CategoriaFormComponent, canActivate: [AdminGuard] },
-      
+      { path: 'categorias', component: CategoriasListaComponent },
+      { path: 'categorias/nueva', component: CategoriaFormComponent },
+      { path: 'categorias/editar/:id', component: CategoriaFormComponent },
+      // Añadir ruta para administración de pedidos
+      { path: 'pedidos', component: PedidosAdminComponent }
     ]
   },
   

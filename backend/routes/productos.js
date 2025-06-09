@@ -259,4 +259,39 @@ router.delete('/:id', async (req, res) => {
     });
   }
 });
+// Ruta para actualizar el stock de un producto
+router.put('/:id/stock', async (req, res) => {
+  try {
+    const { cantidad } = req.body;
+    
+    if (!cantidad || isNaN(cantidad) || cantidad <= 0) {
+      return res.status(400).json({ mensaje: 'La cantidad debe ser un número positivo' });
+    }
+    
+    const producto = await Producto.findById(req.params.id);
+    
+    if (!producto) {
+      return res.status(404).json({ mensaje: 'Producto no encontrado' });
+    }
+    
+    // Verificar si hay suficiente stock
+    if (producto.stock < cantidad) {
+      return res.status(400).json({ 
+        mensaje: `Stock insuficiente. Sólo quedan ${producto.stock} unidades disponibles` 
+      });
+    }
+    
+    // Actualizar el stock
+    producto.stock -= cantidad;
+    await producto.save();
+    
+    res.json({ 
+      mensaje: 'Stock actualizado correctamente', 
+      stockActual: producto.stock 
+    });
+  } catch (error) {
+    console.error('Error al actualizar stock:', error);
+    res.status(500).json({ mensaje: 'Error al actualizar el stock' });
+  }
+});
 module.exports = router;

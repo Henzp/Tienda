@@ -1,19 +1,23 @@
-// header.component.ts
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CarritoService } from '../../services/carrito.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   searchTerm: string = '';
   dropdownVisible = false;
   nombreUsuario: string = '';
   totalItems: number = 0;
+  
+  // Suscripciones para manejar la limpieza
+  private usuarioSubscription?: Subscription;
+  private carritoSubscription?: Subscription;
 
   constructor(
     public authService: AuthService,
@@ -22,16 +26,29 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.authService.usuario$.subscribe(usuario => {
+    // Suscripción al usuario
+    this.usuarioSubscription = this.authService.usuario$.subscribe(usuario => {
       if (usuario) {
         this.nombreUsuario = usuario.nombre;
+      } else {
+        this.nombreUsuario = '';
       }
-    }); // Faltaba este paréntesis de cierre
+    });
     
-    // Esta suscripción debe estar fuera de la suscripción anterior
-    this.carritoService.getTotalItems().subscribe(total => {
+    // Suscripción al carrito
+    this.carritoSubscription = this.carritoService.getTotalItems().subscribe(total => {
       this.totalItems = total;
     });
+  }
+  
+  // Limpiar suscripciones al destruir el componente
+  ngOnDestroy() {
+    if (this.usuarioSubscription) {
+      this.usuarioSubscription.unsubscribe();
+    }
+    if (this.carritoSubscription) {
+      this.carritoSubscription.unsubscribe();
+    }
   }
 
   buscar() {
@@ -45,10 +62,36 @@ export class HeaderComponent implements OnInit {
   toggleDropdown() {
     this.dropdownVisible = !this.dropdownVisible;
   }
+  
+  // Cerrar el dropdown
+  cerrarDropdown() {
+    this.dropdownVisible = false;
+  }
 
+  // Método para manejar navegación
+  navegar(ruta: string) {
+    console.log('Navegando a:', ruta);
+    this.cerrarDropdown();
+    
+    if (ruta === '/pedidos') {
+      console.log('Verificando autenticación antes de navegar a pedidos');
+      if (!this.authService.estaLogueado()) {
+        console.log('No autenticado, redirigiendo a login');
+        this.router.navigate(['/login'], { queryParams: { returnUrl: ruta } });
+        return;
+      }
+    }
+    
+    // Navegación con pequeño retraso para asegurar que el dropdown se cierre
+    setTimeout(() => {
+      this.router.navigate([ruta]);
+    }, 100);
+  }
+
+  // Método para cerrar sesión
   cerrarSesion() {
+    this.cerrarDropdown();
     this.authService.logout();
-    this.router.navigate(['/home']);
   }
 
   @HostListener('document:click', ['$event'])

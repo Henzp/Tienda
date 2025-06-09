@@ -1,20 +1,15 @@
+// Este es el contenido para el archivo: E:\Proyecto\tienda\src\app\services\carrito.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-
-// Interfaz para los items del carrito
-export interface CarritoItem {
-  productoId: string;
-  nombre: string;
-  precio: number;
-  cantidad: number;
-  imagenUrl: string;
-  stockDisponible: number; // Campo para el stock disponible
-}
+import { CarritoItem } from '../models/carrito-item';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CarritoService {
+  // Clave para guardar en localStorage
+  private readonly CART_STORAGE_KEY = 'carrito';
+  
   // Usamos BehaviorSubject para que los componentes puedan suscribirse a cambios
   private itemsCarrito = new BehaviorSubject<CarritoItem[]>([]);
   
@@ -124,7 +119,7 @@ export class CarritoService {
   // Vaciar el carrito
   vaciarCarrito(): void {
     this.itemsCarrito.next([]);
-    localStorage.removeItem('carrito');
+    localStorage.removeItem(this.CART_STORAGE_KEY);
   }
 
   // Obtener total de productos en el carrito
@@ -149,12 +144,12 @@ export class CarritoService {
 
   // Guardar carrito en localStorage
   private guardarCarrito(): void {
-    localStorage.setItem('carrito', JSON.stringify(this.itemsCarrito.value));
+    localStorage.setItem(this.CART_STORAGE_KEY, JSON.stringify(this.itemsCarrito.value));
   }
 
   // Cargar carrito desde localStorage
   private cargarCarrito(): void {
-    const carritoGuardado = localStorage.getItem('carrito');
+    const carritoGuardado = localStorage.getItem(this.CART_STORAGE_KEY);
     
     if (carritoGuardado) {
       try {
@@ -162,6 +157,8 @@ export class CarritoService {
         this.itemsCarrito.next(items);
       } catch (error) {
         console.error('Error al cargar el carrito:', error);
+        // En caso de error, inicializar con un carrito vacío
+        this.itemsCarrito.next([]);
       }
     }
   }

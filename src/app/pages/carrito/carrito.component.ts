@@ -1,5 +1,7 @@
+// Este es el contenido para el archivo: E:\Proyecto\tienda\src\app\pages\carrito\carrito.component.ts
 import { Component, OnInit } from '@angular/core';
-import { CarritoService, CarritoItem } from '../../services/carrito.service';
+import { CarritoService } from '../../services/carrito.service';
+import { CarritoItem } from '../../models/carrito-item';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 

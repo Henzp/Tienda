@@ -1,9 +1,14 @@
+// Este es el contenido para: src/app/pages/checkout/checkout.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CarritoService, CarritoItem } from '../../services/carrito.service';
+import { CarritoService } from '../../services/carrito.service';
+import { CarritoItem } from '../../models/carrito-item';
 import { PedidoService } from '../../services/pedido.service';
 import { AuthService } from '../../services/auth.service';
+import { ProductoService } from '../../services/producto.service';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-checkout',
@@ -26,6 +31,7 @@ export class CheckoutComponent implements OnInit {
     private carritoService: CarritoService,
     private pedidoService: PedidoService,
     private authService: AuthService,
+    private productoService: ProductoService,
     private router: Router
   ) { }
 
@@ -110,15 +116,6 @@ export class CheckoutComponent implements OnInit {
   siguiente(): void {
     this.submitted = true;
     
-    // Para debugging
-    console.log('Estado del formulario:', this.checkoutForm.valid);
-    console.log('Estado de datosEnvio:', this.datosEnvioForm.valid);
-    
-    if (this.datosEnvioForm && this.datosEnvioForm.get('nombre')) {
-      console.log('Valor de nombre:', this.datosEnvioForm.get('nombre')?.value);
-      console.log('Validez de nombre:', this.datosEnvioForm.get('nombre')?.valid);
-    }
-    
     // Validar según el paso actual
     if (this.paso === 1) {
       if (this.datosEnvioForm.invalid) {
@@ -165,67 +162,106 @@ export class CheckoutComponent implements OnInit {
     }
   }
   
-  // Reemplaza temporalmente el método procesarCompra() en checkout.component.ts
-// con esta versión que simula un pedido exitoso
-
-procesarCompra(): void {
-  this.submitted = true;
-  
-  if (this.checkoutForm.invalid) {
-    return;
-  }
-  
-  this.procesando = true;
-  
-  // Preparar datos del pedido (esto lo mantenemos para simular el proceso real)
-  const datosEnvio = this.datosEnvioForm.value;
-  const metodoEnvio = this.metodoEnvioForm.value;
-  const metodoPago = this.checkoutForm.get('metodoPago')?.value;
-  
-  // Convertir items del carrito al formato necesario para el pedido
-  const productosPedido = this.items.map(item => ({
-    producto: item.productoId,
-    nombre: item.nombre,
-    precio: item.precio,
-    cantidad: item.cantidad,
-    imagenUrl: item.imagenUrl
-  }));
-  
-  // Simular un pedido exitoso (SOLUCIÓN TEMPORAL)
-  setTimeout(() => {
-    this.procesando = false;
+  // Método modificado para procesar la compra y actualizar el stock
+  procesarCompra(): void {
+    this.submitted = true;
     
-    // Crear un ID de pedido simulado
-    const pedidoSimulado = {
-      _id: 'pedido-' + Date.now(),
-      numeroPedido: '0424-' + Math.floor(10000 + Math.random() * 90000),
-      productos: productosPedido,
-      datosEnvio: datosEnvio,
-      metodoEnvio: {
-        tipo: metodoEnvio.tipo,
-        costo: this.costoEnvio
+    if (this.checkoutForm.invalid) {
+      return;
+    }
+    
+    this.procesando = true;
+    
+    // Preparar datos del pedido
+    const datosEnvio = this.datosEnvioForm.value;
+    const metodoEnvio = this.metodoEnvioForm.value;
+    const metodoPago = this.checkoutForm.get('metodoPago')?.value;
+    
+    // Convertir items del carrito al formato necesario para el pedido
+    const productosPedido = this.items.map(item => ({
+      producto: item.productoId,
+      nombre: item.nombre,
+      precio: item.precio,
+      cantidad: item.cantidad,
+      imagenUrl: item.imagenUrl
+    }));
+    
+    // 1. Actualizar el stock de cada producto
+    const actualizacionesStock = this.items.map(item => {
+      return this.productoService.actualizarStock(item.productoId, item.cantidad)
+        .pipe(
+          catchError(error => {
+            console.error(`Error al actualizar stock para ${item.nombre}:`, error);
+            return of(null); // Devolver null en caso de error
+          })
+        );
+    });
+    
+    // Ejecutar todas las actualizaciones de stock en paralelo
+    forkJoin(actualizacionesStock).subscribe({
+      next: (resultados) => {
+        // Verificar si todos los stocks se actualizaron correctamente
+        const todoExitoso = resultados.every(resultado => resultado !== null);
+        
+        if (!todoExitoso) {
+          this.procesando = false;
+          alert('Hubo un problema al actualizar el stock de algunos productos. Por favor, intenta nuevamente.');
+          return;
+        }
+        
+        // 2. Si todo el stock se actualizó correctamente, crear el pedido
+        // Crear un ID de pedido simulado
+        const pedidoSimulado = {
+          _id: 'pedido-' + Date.now(),
+          numeroPedido: '0424-' + Math.floor(10000 + Math.random() * 90000),
+          productos: productosPedido,
+          datosEnvio: datosEnvio,
+          metodoEnvio: {
+            tipo: metodoEnvio.tipo,
+            costo: this.costoEnvio
+          },
+          metodoPago: metodoPago,
+          subtotal: this.subtotal,
+          total: this.total,
+          estado: 'pendiente',
+          fechaCreacion: new Date().toISOString()
+        };
+        
+        // Si ya tienes el backend para crear pedidos, usa este código en lugar de localStorage
+        // this.pedidoService.crearPedido(pedidoData).subscribe({
+        //   next: (pedidoCreado) => {
+        //     this.carritoService.vaciarCarrito();
+        //     this.procesando = false;
+        //     this.router.navigate(['/confirmacion-pedido', pedidoCreado._id]);
+        //   },
+        //   error: (error) => {
+        //     console.error('Error al crear pedido:', error);
+        //     this.procesando = false;
+        //     alert('Error al crear el pedido');
+        //   }
+        // });
+        
+        // Si estás usando simulación con localStorage
+        const pedidosGuardados = JSON.parse(localStorage.getItem('pedidos') || '[]');
+        pedidosGuardados.push(pedidoSimulado);
+        localStorage.setItem('pedidos', JSON.stringify(pedidosGuardados));
+        
+        // Vaciar carrito
+        this.carritoService.vaciarCarrito();
+        
+        // Redireccionar a la página de confirmación
+        this.procesando = false;
+        this.router.navigate(['/confirmacion-pedido', pedidoSimulado._id]);
+        
+        console.log('Pedido simulado creado:', pedidoSimulado);
       },
-      metodoPago: metodoPago,
-      subtotal: this.subtotal,
-      total: this.total,
-      estado: 'pendiente',
-      fechaCreacion: new Date().toISOString()
-    };
-    
-    // Almacenar en localStorage para simular persistencia
-    const pedidosGuardados = JSON.parse(localStorage.getItem('pedidos') || '[]');
-    pedidosGuardados.push(pedidoSimulado);
-    localStorage.setItem('pedidos', JSON.stringify(pedidosGuardados));
-    
-    // Vaciar carrito
-    this.carritoService.vaciarCarrito();
-    
-    // Redireccionar a la página de confirmación
-    this.router.navigate(['/confirmacion-pedido', pedidoSimulado._id]);
-    
-    console.log('Pedido simulado creado:', pedidoSimulado);
-  }, 2000); // Simular un retraso de 2 segundos
-}
+      error: (error) => {
+        console.error('Error al actualizar stock:', error);
+        this.procesando = false;
+        alert('Hubo un error al procesar tu pedido. Por favor, intenta nuevamente.');
+      }
+    });
+  }
   
   continuarComprando(): void {
     this.router.navigate(['/carrito']);

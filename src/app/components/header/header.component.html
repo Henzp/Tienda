@@ -27,11 +27,11 @@
                 <i class="fas fa-user"></i> {{ nombreUsuario }}
               </a>
               <div class="dropdown-menu" [class.show]="dropdownVisible">
-                <a routerLink="/perfil">Mi perfil</a>
-                <a routerLink="/pedidos">Mis pedidos</a>
+                <a (click)="navegar('/perfil')">Mi perfil</a>
+                <a (click)="navegar('/pedidos')">Mis pedidos</a>
                 <ng-container *ngIf="authService.esAdmin()">
                   <div class="dropdown-divider"></div>
-                  <a routerLink="/admin/productos">Panel de administración</a>
+                  <a (click)="navegar('/admin/productos')">Panel de administración</a>
                 </ng-container>
                 <div class="dropdown-divider"></div>
                 <a (click)="cerrarSesion()">Cerrar sesión</a>
@@ -49,6 +49,7 @@
     </div>
   </div>
   
+  <!-- Resto del header (nav) permanece igual -->
   <div class="header-nav">
     <div class="container">
       <nav>

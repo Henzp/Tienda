@@ -1,6 +1,7 @@
+// Este es el contenido para el archivo: E:\Proyecto\tienda\src\app\services\pedido.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
@@ -66,9 +67,32 @@ export class PedidoService {
     return this.http.get<any[]>(`${this.apiUrl}/pedidos/usuario`, { headers }).pipe(
       catchError(error => {
         console.error('Error al obtener pedidos del usuario:', error);
-        return throwError(() => error);
+        // Si hay error, intentar cargar de localStorage
+        return this.getPedidosLocalesPorUsuario();
       })
     );
+  }
+
+  /**
+   * Obtiene pedidos del usuario actual desde localStorage (fallback)
+   */
+  private getPedidosLocalesPorUsuario(): Observable<any[]> {
+    try {
+      const pedidosGuardados = JSON.parse(localStorage.getItem('pedidos') || '[]');
+      const usuarioActual = this.authService.getCurrentUser();
+      
+      if (usuarioActual && usuarioActual.email) {
+        const pedidosUsuario = pedidosGuardados.filter((pedido: any) => 
+          pedido.datosEnvio && pedido.datosEnvio.email === usuarioActual.email
+        );
+        return of(pedidosUsuario);
+      }
+      
+      return of([]);
+    } catch (error) {
+      console.error('Error al cargar pedidos desde localStorage:', error);
+      return of([]);
+    }
   }
 
   /**
@@ -81,8 +105,96 @@ export class PedidoService {
     return this.http.get<any>(`${this.apiUrl}/pedidos/${id}`, { headers }).pipe(
       catchError(error => {
         console.error('Error al obtener pedido:', error);
-        return throwError(() => error);
+        // Si hay error, intentar cargar de localStorage
+        return this.getPedidoLocal(id);
       })
     );
+  }
+
+  /**
+   * Obtiene un pedido específico desde localStorage (fallback)
+   * @param id ID del pedido
+   */
+  private getPedidoLocal(id: string): Observable<any> {
+    try {
+      const pedidosGuardados = JSON.parse(localStorage.getItem('pedidos') || '[]');
+      const pedido = pedidosGuardados.find((p: any) => p._id === id);
+      
+      if (pedido) {
+        return of(pedido);
+      }
+      
+      return throwError(() => new Error('Pedido no encontrado'));
+    } catch (error) {
+      return throwError(() => error);
+    }
+  }
+
+  /**
+   * Obtiene todos los pedidos (solo para administradores)
+   */
+  getTodosPedidos(): Observable<any[]> {
+    const headers = this.getAuthHeaders();
+    
+    return this.http.get<any[]>(`${this.apiUrl}/pedidos/todos`, { headers }).pipe(
+      catchError(error => {
+        console.error('Error al obtener todos los pedidos:', error);
+        // Si hay error, intentar cargar de localStorage
+        return this.getTodosPedidosLocales();
+      })
+    );
+  }
+
+  /**
+   * Obtiene todos los pedidos desde localStorage (fallback)
+   */
+  private getTodosPedidosLocales(): Observable<any[]> {
+    try {
+      const pedidosGuardados = JSON.parse(localStorage.getItem('pedidos') || '[]');
+      return of(pedidosGuardados);
+    } catch (error) {
+      console.error('Error al cargar todos los pedidos desde localStorage:', error);
+      return of([]);
+    }
+  }
+
+  /**
+   * Actualiza el estado de un pedido
+   * @param id ID del pedido
+   * @param estado Nuevo estado
+   */
+  actualizarEstadoPedido(id: string, estado: string): Observable<any> {
+    const headers = this.getAuthHeaders();
+    
+    return this.http.put<any>(`${this.apiUrl}/pedidos/${id}/estado`, { estado }, { headers }).pipe(
+      tap(response => console.log('Estado del pedido actualizado:', response)),
+      catchError(error => {
+        console.error('Error al actualizar estado del pedido:', error);
+        // Si hay error, intentar actualizar en localStorage
+        return this.actualizarEstadoPedidoLocal(id, estado);
+      })
+    );
+  }
+
+  /**
+   * Actualiza el estado de un pedido en localStorage (fallback)
+   * @param id ID del pedido
+   * @param estado Nuevo estado
+   */
+  private actualizarEstadoPedidoLocal(id: string, estado: string): Observable<any> {
+    try {
+      const pedidosGuardados = JSON.parse(localStorage.getItem('pedidos') || '[]');
+      const index = pedidosGuardados.findIndex((p: any) => p._id === id);
+      
+      if (index !== -1) {
+        pedidosGuardados[index].estado = estado;
+        localStorage.setItem('pedidos', JSON.stringify(pedidosGuardados));
+        return of({ mensaje: 'Estado actualizado localmente', pedido: pedidosGuardados[index] });
+      }
+      
+      return throwError(() => new Error('Pedido no encontrado'));
+    } catch (error) {
+      return throwError(() => error);
+    }
   }
 }

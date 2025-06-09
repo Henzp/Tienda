@@ -71,4 +71,46 @@ export class ProductoService {
       )
     );
   }
+
+  // Nueva función para actualizar el stock de un producto
+  actualizarStock(productoId: string, cantidad: number): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/productos/${productoId}/stock`, { cantidad });
+  }
+  
+  // Función para actualizar el stock localmente (para modo simulado)
+  actualizarStockLocal(productoId: string, cantidad: number): boolean {
+    try {
+      // Obtener productos almacenados localmente (si existen)
+      const productosLocalStr = localStorage.getItem('productos');
+      if (!productosLocalStr) {
+        console.error('No hay productos almacenados localmente');
+        return false;
+      }
+
+      const productosLocal = JSON.parse(productosLocalStr);
+      const producto = productosLocal.find((p: any) => (p._id === productoId || p.id === productoId));
+      
+      if (!producto) {
+        console.error(`Producto con ID ${productoId} no encontrado localmente`);
+        return false;
+      }
+      
+      // Verificar que hay suficiente stock
+      if (producto.stock < cantidad) {
+        console.error(`Stock insuficiente para el producto ${producto.nombre}`);
+        return false;
+      }
+      
+      // Actualizar el stock
+      producto.stock -= cantidad;
+      
+      // Guardar de nuevo en localStorage
+      localStorage.setItem('productos', JSON.stringify(productosLocal));
+      console.log(`Stock actualizado para el producto ${producto.nombre}: nuevo stock = ${producto.stock}`);
+      return true;
+    } catch (error) {
+      console.error('Error al actualizar stock localmente:', error);
+      return false;
+    }
+  }
 }

@@ -2,6 +2,17 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+require('dotenv').config();
+
+// DEBUG TEMPORAL - agrega estas líneas para diagnosticar
+console.log('=== VERIFICANDO VARIABLES .ENV ===');
+console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'CARGADA' : 'NO ENCONTRADA');
+console.log('MONGODB_URI valor completo:', process.env.MONGODB_URI);
+console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'CARGADO' : 'NO ENCONTRADO');
+console.log('PORT:', process.env.PORT);
+console.log('Current working directory:', process.cwd());
+console.log('===================================');
+
 const app = express();
 
 // Middleware
@@ -12,7 +23,11 @@ app.use(express.json());
 app.use('/assets', express.static(path.join(__dirname, '../src/assets')));
 
 // Conexión a MongoDB Atlas
-mongoose.connect('mongodb+srv://tiendamotos:pass123456@motomoto.ymvclyi.mongodb.net/tiendamotos?retryWrites=true&w=majority&appName=motomoto', {
+const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://tiendamotos:pass123456@motomoto.ymvclyi.mongodb.net/tiendamotos?retryWrites=true&w=majority&appName=motomoto';
+
+console.log('Intentando conectar con URI:', mongoUri.substring(0, 50) + '...');
+
+mongoose.connect(mongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })

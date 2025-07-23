@@ -1,4 +1,3 @@
-// Este es el contenido para: src/app/pages/checkout/checkout.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -162,7 +161,7 @@ export class CheckoutComponent implements OnInit {
     }
   }
   
-  // Método modificado para procesar la compra y actualizar el stock
+  // MÉTODO CORREGIDO: Ahora usa la API real en lugar de localStorage
   procesarCompra(): void {
     this.submitted = true;
     
@@ -186,79 +185,45 @@ export class CheckoutComponent implements OnInit {
       imagenUrl: item.imagenUrl
     }));
     
-    // 1. Actualizar el stock de cada producto
-    const actualizacionesStock = this.items.map(item => {
-      return this.productoService.actualizarStock(item.productoId, item.cantidad)
-        .pipe(
-          catchError(error => {
-            console.error(`Error al actualizar stock para ${item.nombre}:`, error);
-            return of(null); // Devolver null en caso de error
-          })
-        );
-    });
+    // Preparar datos para el pedido
+    const pedidoData = {
+      productos: productosPedido,
+      datosEnvio: datosEnvio,
+      metodoEnvio: {
+        tipo: metodoEnvio.tipo,
+        costo: this.costoEnvio
+      },
+      metodoPago: metodoPago,
+      subtotal: this.subtotal,
+      total: this.total
+    };
     
-    // Ejecutar todas las actualizaciones de stock en paralelo
-    forkJoin(actualizacionesStock).subscribe({
-      next: (resultados) => {
-        // Verificar si todos los stocks se actualizaron correctamente
-        const todoExitoso = resultados.every(resultado => resultado !== null);
+    console.log('Creando pedido con datos:', pedidoData);
+    
+    // USAR LA API REAL PARA CREAR EL PEDIDO
+    this.pedidoService.crearPedido(pedidoData).subscribe({
+      next: (pedidoCreado) => {
+        console.log('Pedido creado exitosamente:', pedidoCreado);
         
-        if (!todoExitoso) {
-          this.procesando = false;
-          alert('Hubo un problema al actualizar el stock de algunos productos. Por favor, intenta nuevamente.');
-          return;
-        }
-        
-        // 2. Si todo el stock se actualizó correctamente, crear el pedido
-        // Crear un ID de pedido simulado
-        const pedidoSimulado = {
-          _id: 'pedido-' + Date.now(),
-          numeroPedido: '0424-' + Math.floor(10000 + Math.random() * 90000),
-          productos: productosPedido,
-          datosEnvio: datosEnvio,
-          metodoEnvio: {
-            tipo: metodoEnvio.tipo,
-            costo: this.costoEnvio
-          },
-          metodoPago: metodoPago,
-          subtotal: this.subtotal,
-          total: this.total,
-          estado: 'pendiente',
-          fechaCreacion: new Date().toISOString()
-        };
-        
-        // Si ya tienes el backend para crear pedidos, usa este código en lugar de localStorage
-        // this.pedidoService.crearPedido(pedidoData).subscribe({
-        //   next: (pedidoCreado) => {
-        //     this.carritoService.vaciarCarrito();
-        //     this.procesando = false;
-        //     this.router.navigate(['/confirmacion-pedido', pedidoCreado._id]);
-        //   },
-        //   error: (error) => {
-        //     console.error('Error al crear pedido:', error);
-        //     this.procesando = false;
-        //     alert('Error al crear el pedido');
-        //   }
-        // });
-        
-        // Si estás usando simulación con localStorage
-        const pedidosGuardados = JSON.parse(localStorage.getItem('pedidos') || '[]');
-        pedidosGuardados.push(pedidoSimulado);
-        localStorage.setItem('pedidos', JSON.stringify(pedidosGuardados));
-        
-        // Vaciar carrito
+        // Vaciar carrito después de crear el pedido exitosamente
         this.carritoService.vaciarCarrito();
         
-        // Redireccionar a la página de confirmación
         this.procesando = false;
-        this.router.navigate(['/confirmacion-pedido', pedidoSimulado._id]);
         
-        console.log('Pedido simulado creado:', pedidoSimulado);
+        // Redireccionar a la página de confirmación
+        this.router.navigate(['/confirmacion-pedido', pedidoCreado.pedido._id]);
       },
       error: (error) => {
-        console.error('Error al actualizar stock:', error);
+        console.error('Error al crear pedido:', error);
         this.procesando = false;
-        alert('Hubo un error al procesar tu pedido. Por favor, intenta nuevamente.');
+        
+        // Mostrar mensaje de error específico
+        if (error.status === 401) {
+          alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+          this.router.navigate(['/login'], { queryParams: { returnUrl: '/checkout' } });
+        } else {
+          alert('Error al crear el pedido: ' + (error.error?.mensaje || 'Error desconocido'));
+        }
       }
     });
   }

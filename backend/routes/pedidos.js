@@ -10,6 +10,9 @@ const auth = require('../middlewares/auth');
 // Crear un nuevo pedido (ruta protegida)
 router.post('/', auth, async (req, res) => {
   try {
+    console.log('Recibiendo pedido:', req.body);
+    console.log('Usuario autenticado:', req.usuario);
+    
     const { productos, datosEnvio, metodoEnvio, metodoPago, subtotal, total } = req.body;
     
     // Validar datos
@@ -28,10 +31,13 @@ router.post('/', auth, async (req, res) => {
       total
     });
     
+    console.log('Creando pedido:', nuevoPedido);
+    
     // Actualizar stock de productos
     for (const item of productos) {
       const producto = await Producto.findById(item.producto);
       if (producto) {
+        console.log(`Actualizando stock de ${producto.nombre}: ${producto.stock} -> ${Math.max(0, producto.stock - item.cantidad)}`);
         // Restar la cantidad comprada del stock
         producto.stock = Math.max(0, producto.stock - item.cantidad);
         await producto.save();
@@ -39,11 +45,12 @@ router.post('/', auth, async (req, res) => {
     }
     
     // Guardar el pedido
-    await nuevoPedido.save();
+    const pedidoGuardado = await nuevoPedido.save();
+    console.log('Pedido guardado exitosamente:', pedidoGuardado);
     
     res.status(201).json({ 
       mensaje: 'Pedido creado exitosamente', 
-      pedido: nuevoPedido 
+      pedido: pedidoGuardado 
     });
   } catch (error) {
     console.error('Error al crear pedido:', error);
@@ -70,10 +77,38 @@ router.get('/usuario', auth, async (req, res) => {
   }
 });
 
+// NUEVA RUTA: Obtener todos los pedidos para admin (coincide con frontend)
+router.get('/todos', auth, async (req, res) => {
+  try {
+    console.log('Usuario intentando acceder a todos los pedidos:', req.usuario);
+    
+    // Verificar si el usuario es admin
+    if (req.usuario.rol !== 'admin') {
+      return res.status(403).json({ mensaje: 'No tienes permiso para ver todos los pedidos' });
+    }
+    
+    // Obtener todos los pedidos ordenados por fecha
+    const pedidos = await Pedido.find({})
+      .sort({ fechaCreacion: -1 })
+      .populate('usuario', 'nombre email');
+    
+    console.log(`Se encontraron ${pedidos.length} pedidos`);
+    
+    res.json(pedidos);
+  } catch (error) {
+    console.error('Error al obtener todos los pedidos:', error);
+    res.status(500).json({ 
+      mensaje: 'Error al obtener pedidos', 
+      error: error.toString() 
+    });
+  }
+});
+
 // Obtener un pedido específico por ID
 router.get('/:id', auth, async (req, res) => {
   try {
-    const pedido = await Pedido.findById(req.params.id);
+    const pedido = await Pedido.findById(req.params.id)
+      .populate('usuario', 'nombre email');
     
     if (!pedido) {
       return res.status(404).json({ mensaje: 'Pedido no encontrado' });
@@ -81,7 +116,7 @@ router.get('/:id', auth, async (req, res) => {
     
     // Verificar que el pedido pertenezca al usuario autenticado
     // (a menos que sea un administrador)
-    if (pedido.usuario.toString() !== req.usuario.id && req.usuario.rol !== 'admin') {
+    if (pedido.usuario._id.toString() !== req.usuario.id && req.usuario.rol !== 'admin') {
       return res.status(403).json({ mensaje: 'No tienes permiso para ver este pedido' });
     }
     
@@ -96,7 +131,7 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Actualizar el estado de un pedido (solo admins)
-router.patch('/:id/estado', auth, async (req, res) => {
+router.put('/:id/estado', auth, async (req, res) => {
   try {
     // Verificar si el usuario es admin
     if (req.usuario.rol !== 'admin') {
@@ -191,7 +226,7 @@ router.patch('/:id/cancelar', auth, async (req, res) => {
   }
 });
 
-// Obtener todos los pedidos (solo admins)
+// Obtener todos los pedidos con paginación (solo admins) - Ruta original
 router.get('/', auth, async (req, res) => {
   try {
     // Verificar si el usuario es admin

@@ -4,12 +4,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Producto } from '../models/producto';
+import { environment } from '../environments/environment';  // ← AGREGADO
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductoService {
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = environment.apiUrl;  // ← CAMBIADO: Ahora usa environment
 
   constructor(private http: HttpClient) { }
 

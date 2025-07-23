@@ -1,14 +1,12 @@
 {
-  "name": "backend",
+  "name": "tienda-motos-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Backend API para Tienda de Motos",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",
@@ -19,5 +17,8 @@
     "mongoose": "^8.13.2",
     "multer": "^1.4.5-lts.2",
     "nodemailer": "^6.10.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

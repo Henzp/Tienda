@@ -15,9 +15,22 @@ console.log('===================================');
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// Middleware - CORS mejorado para Railway + Cloudflare
+app.use(cors({
+    origin: [
+        'http://localhost:4200',
+        'https://*.pages.dev',
+        'https://tu-dominio.pages.dev'  // Cambiar después
+    ],
+    credentials: true
+}));
+
 app.use(express.json());
+
+// Ruta básica para Railway health check
+app.get('/', (req, res) => {
+    res.json({ mensaje: 'Backend funcionando en Railway!' });
+});
 
 // Servir archivos estáticos (para las imágenes)
 app.use('/assets', express.static(path.join(__dirname, '../src/assets')));
@@ -27,10 +40,7 @@ const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://tiendamotos:pass12345
 
 console.log('Intentando conectar con URI:', mongoUri.substring(0, 50) + '...');
 
-mongoose.connect(mongoUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+mongoose.connect(mongoUri)
 .then(() => console.log('Conectado a MongoDB Atlas'))
 .catch(err => console.error('Error al conectar a MongoDB:', err));
 
@@ -70,8 +80,8 @@ app.get('/api/productos/categoria/:categoria', async (req, res) => {
     }
 });
 
-// Puerto del servidor
+// Puerto del servidor (Railway maneja el puerto automáticamente)
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });

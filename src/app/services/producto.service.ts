@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Producto } from '../models/producto';
-import { environment } from '../environments/environment';  // ← AGREGADO
+import { environment } from '../../environments/environment';  // ← AGREGADO
 
 @Injectable({
   providedIn: 'root'

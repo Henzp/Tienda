@@ -20,7 +20,8 @@ app.use(cors({
     origin: [
         'http://localhost:4200',
         'https://*.pages.dev',
-        'https://tu-dominio.pages.dev'  // Cambiar después
+        'https://tienda-frontend.pages.dev',  // Tu futuro dominio
+        'https://*.cloudflare.dev'
     ],
     credentials: true
 }));

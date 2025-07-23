@@ -1,5 +1,4 @@
 export const environment = {
-    production: true,
-    apiUrl: '' // Deja vacío por ahora si no tienes la URL
-  };
-  
+  production: true,
+  apiUrl: 'https://tienda-backend-9vp1.onrender.com/api'
+};

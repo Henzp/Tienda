@@ -11,12 +11,12 @@ app.use(express.json());
 // Servir archivos estáticos (para las imágenes)
 app.use('/assets', express.static(path.join(__dirname, '../src/assets')));
 
-// Conexión a MongoDB
-mongoose.connect('mongodb://localhost:27017/tiendamotos', {
+// Conexión a MongoDB Atlas
+mongoose.connect('mongodb+srv://tiendamotos:pass123456@motomoto.ymvclyi.mongodb.net/tiendamotos?retryWrites=true&w=majority&appName=motomoto', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-.then(() => console.log('Conectado a MongoDB'))
+.then(() => console.log('Conectado a MongoDB Atlas'))
 .catch(err => console.error('Error al conectar a MongoDB:', err));
 
 // Rutas
